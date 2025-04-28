@@ -4,11 +4,10 @@ def create():
     c = con.cursor()
     c.execute(
         """
-    CREATE TABLE customer (
+    CREATE TABLE admin (
     customer_id INTEGER PRIMARY KEY AUTOINCREMENT,
     first_name VARCHAR(50),
     last_name VARCHAR(50),
-    contacts VARCHAR(12),
     email VARCHAR(100) UNIQUE,
     password VARCHAR(50),
     role VARCHAR(5),
