@@ -1,0 +1,32 @@
+{% extends 'base.html'%}
+
+{% block title %} Sign Up {% endblock %}
+
+{% block content %}
+
+    <section class="p-5">
+        <div class="container rounded shadow p-5 w-75">
+            <h3 class="fw-bold text-center">Welcome To Login Page!</h3>
+            <form action="/login" method="post">
+                {% if wrong %}
+              <div class="alert alert-danger text-center d-flex justify-content-between">
+                {{ wrong }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+                {% endif %}
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <div class="mb-3 text-center">
+                    <button type="submit" class="btn btn-warning">Login</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+{% endblock %}

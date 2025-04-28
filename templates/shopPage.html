@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title  %} Shop Page {% endblock %}
+
+{% block content %}
+    <section class="p-5">
+        <!-- Add Modal -->
+         <div class="container">
+            {% if msgs %}
+              <div class="alert alert-success text-center d-flex justify-content-between">
+                {{ msgs }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endif %}
+            <div class="container text-center">
+                <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#add">
+                    Add Products
+                </button>          
+            </div>
+             <div class="modal" id="add" tabindex="-1">
+                 <div class="modal-dialog">
+                   <div class="modal-content">
+                     <div class="modal-header">
+                       <h5 class="modal-title">Add Products</h5>
+                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                     </div>
+                     <div class="modal-body">
+                       <form action="/add" method="post">
+                         <div class="mb-3">
+                             <label class="form-label">
+                                 Name:
+                             </label>
+                             <input type="text" name="name" class="form-control" required>
+                         </div>
+                         <div class="mb-3">
+                             <label class="form-label">
+                                 Description:
+                             </label>
+                             <textarea class="form-control" name="description" rows="3"></textarea>
+                         </div>
+                         <div class="mb-3">
+                             <label class="form-label">
+                                 price:
+                             </label>
+                             <input type="number" name="price" class="form-control" required>
+                         </div>
+                         <div class="mb-3">
+                             <label class="form-label">
+                                 stocks:
+                             </label>
+                             <input type="number" name="stocks" class="form-control" required>
+                         </div>
+                         <div class="mb-3">
+                             <label class="form-label">
+                                 Category:
+                             </label>
+                             <select class="form-select" name="category" aria-label="Default select example">
+                                 <option selected value="cellphone">Cellphone</option>
+                                 <option value="tablet">Tablet</option>
+                                 <option value="laptop">Laptop</option>
+                                 <option value="desktop">Desktop</option>
+                                 <option value="camera">Camera</option>
+                                 <option value="smartwatch">Smart Watch</option>
+                               </select>
+                         </div>
+                         <div class="mb-3 text-center">
+                             <button type="submit" class="btn btn-warning">
+                                 Upload
+                             </button>
+                             <button type="reset" class="btn btn-secondary">Clear</button>
+                         </div>
+                       </form>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+               <!--End of Add Modal-->
+         </div>
+        <div class="row g-3">
+            {% for i in data %}
+                <div class="col-12 col-lg-4 col-md-6 mb-4">
+                    <div class="card rounded shadow-sm">
+                        <img src="/static/images/{{i[3]}}.png" class="card-img-top" alt="{{ i[1] }}">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {{ i[1] }}
+                            </h5>
+                            <p class="card-text">
+                                {{ i[2] }}
+                            </p>
+                            <p class="card-text">
+                                Price: <span class="fw-bold">₱{{ i[4] }}</span>
+                            </p>
+                            <p class="card-text">
+                                <i class="bi bi-box-seam"></i> Stocks: {{ i[5] }}
+                            </p>
+                            <p><i class="bi bi-truck text-warning"></i> Free Shipping Fee</p>
+                            <div class="d-flex justify-content-start">
+                                <button class="btn btn-warning mx-2">
+                                    <i class="bi bi-bag-plus-fill me-1"></i> Buy
+                                </button>
+                                <button class="btn btn-secondary">
+                                    <i class="bi bi-cart-plus me-1"></i> Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+        </div>
+    </section>
+{% endblock %}

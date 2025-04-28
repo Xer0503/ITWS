@@ -1,0 +1,7 @@
+#comp{
+    width: 150px;
+}
+
+#comp:hover{
+    opacity: 0.8;
+}
