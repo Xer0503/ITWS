@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, request, url_for, redirect, session
 from connection import connection_prod, connection_acc
 from db import query_items, query_feedback
 from customer_query import customer_query
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'
 
 @app.route('/')
 @app.route('/home')
@@ -13,8 +14,11 @@ def home():
 @app.route('/shop')
 def shop():
     data = query_items()
-    msgs = request.args.get('msgs')
-    return render_template('shopPage.html', data = data, msgs = msgs)
+    if 'role' in session and session['role'] == 'user':
+        return render_template('shopPage.html', data=data)
+    else:
+        return redirect(url_for('admin'))  # or show error
+
 
 @app.route('/devs')
 def aboutUs():
@@ -22,7 +26,11 @@ def aboutUs():
 
 @app.route('/admin')
 def admin():
-    return render_template('/admin/index.html')
+    if 'role' in session and session['role'] == 'admin':
+        return render_template('/admin/index.html')
+    else:
+        return redirect(url_for('home'))  # or 403 error if preferred
+
 
 @app.route('/admin/customer_table')
 def customer_table():
@@ -197,18 +205,48 @@ def feedbackSection():
 def login():
     return render_template('login.html')
 
-@app.route('/login', methods = ['POST'])
+@app.route('/login', methods=['POST'])
 def login_validation():
-    acc_validate = (
-        request.form['email'],
-        request.form['password']
-    )
-    verify = validate(acc_validate)
+    con = connection_acc()
+    cursor = con.cursor()
+    email = request.form['email']
+    password = request.form['password']
 
-    if len(verify) > 0:
-        return redirect(url_for('admin'))
-    else:
-        return render_template('login.html', wrong = 'Wrong Email or Password')
+    try:
+        cursor.execute("SELECT * FROM customer WHERE email = ? AND password = ?", (email, password))
+        user = cursor.fetchone()
+
+        # If not found in customer table, check admin table
+        if not user:
+            cursor.execute("SELECT * FROM admin WHERE email = ? AND password = ?", (email, password))
+            user = cursor.fetchone()
+            session['first_name'] = user[1]
+            session['last_name'] = user[2] 
+
+        if user:
+            # Store user details in session
+            session['user_id'] = user[0]  # Assuming 0 is user_id
+            session['first_name'] = user[1]
+            session['last_name'] = user[2]    # Assuming 1 is email
+
+            # Adjust index based on the table
+            if len(user) > 7:  # This means it's the 'customer' table
+                session['role'] = user[7]  # Role is at index 7 in customer table
+            else:  # It's the 'admin' table
+                session['role'] = user[5]  # Role is at index 5 in admin table
+
+            # Redirect based on role
+            if session['role'] == 'admin':
+                return redirect(url_for('admin'))
+            else:
+                return redirect(url_for('shop'))
+
+        else:
+            return render_template('login.html', wrong='Invalid email or password')
+        
+    except Exception as e:
+        print("Error during login:", e)
+        return render_template('login.html', wrong='Invalid email or password')
 
 def validate(acc_validate):    
     con = connection_acc()
@@ -254,6 +292,10 @@ def signup_add(user_acc):
     con.commit()
     con.close()
 
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.clear()  # Clears all session data
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True)

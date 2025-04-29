@@ -1,16 +1,16 @@
 from connection import connection_prod, connection_acc
 def create():
-    con = connection_prod()
+    con = connection_acc()
     c = con.cursor()
     c.execute(
         """
-    CREATE TABLE items (
-    item_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    item_name VARCHAR(50),
-    item_description TEXT,
-    item_price REAL,
-    item_stock INTEGER,
-    item_category VARCHAR(50)
+    CREATE TABLE admin (
+    admin_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email unique,
+    password VARCHAR(100),
+    role VARCHAR(5)
     )
     """        
     )
@@ -78,11 +78,11 @@ def deleteItems():
     con.close()
 
 def dropTable():
-    con = connection_prod()
+    con = connection_acc()
     c = con.cursor()
 
     c.execute("""
-        DROP TABLE items
+        DROP TABLE admin
         """)
     con.commit()
     con.close()
@@ -90,7 +90,7 @@ def dropTable():
 def query_customer():
     con = connection_acc()
     c = con.cursor()
-    sql = 'SELECT * FROM customer'
+    sql = 'SELECT * FROM admin'
     c.execute(sql)
 
     customer = c.fetchall()
@@ -109,3 +109,18 @@ def addColumn():
     """)
     con.commit()
     con.close()
+
+def addAdmin():
+    con = connection_acc()
+    c = con.cursor()
+
+    c.execute("""
+        INSERT INTO admin (first_name, last_name, email, password, role) 
+        VALUES 
+            ('Rexie', 'Villanueva', 'rexie03@gmail.com', 'rexie', 'admin')
+              
+        """)
+    con.commit()
+    con.close()
+    
+query_customer()
