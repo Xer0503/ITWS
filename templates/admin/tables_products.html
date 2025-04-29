@@ -9,16 +9,21 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Animation Utilities</title>
+    <title>SB Admin 2 - Tables</title>
 
-    <!-- Custom fonts for this template-->
+    <!-- Custom fonts for this template -->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
-    <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="/static/css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this page -->
+    <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
 
 </head>
 
@@ -73,19 +78,19 @@
             </li>
 
             <!-- Nav Item - Utilities Collapse Menu -->
-            <li class="nav-item active">
-                <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
                     aria-expanded="true" aria-controls="collapseUtilities">
                     <i class="fas fa-fw fa-wrench"></i>
                     <span>Utilities</span>
                 </a>
-                <div id="collapseUtilities" class="collapse show" aria-labelledby="headingUtilities"
+                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Custom Utilities:</h6>
                         <a class="collapse-item" href="utilities-color.html">Colors</a>
                         <a class="collapse-item" href="utilities-border.html">Borders</a>
-                        <a class="collapse-item active" href="utilities-animation.html">Animations</a>
+                        <a class="collapse-item" href="utilities-animation.html">Animations</a>
                         <a class="collapse-item" href="utilities-other.html">Other</a>
                     </div>
                 </div>
@@ -128,8 +133,8 @@
             </li>
 
             <!-- Nav Item - Tables -->
-            <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+            <li class="nav-item active">
+                <a class="nav-link" href="{{url_for('admin')}}">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Tables</span></a>
             </li>
@@ -155,9 +160,11 @@
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
                     <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                        <i class="fa fa-bars"></i>
-                    </button>
+                    <form class="form-inline">
+                        <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                    </form>
 
                     <!-- Topbar Search -->
                     <form
@@ -358,108 +365,185 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Page Heading -->
-                    <h1 class="h3 mb-1 text-gray-800">Animation Utilities</h1>
-                    <p class="mb-4">Bootstrap's default utility classes can be found on the official <a
-                            href="https://getbootstrap.com/docs">Bootstrap Documentation</a> page. The custom utilities
-                        below were created to extend this theme past the default utility classes built into Bootstrap's
-                        framework.</p>
+                    <div class="container">
+                        {% if msgs %}
+                          <div class="alert alert-success text-center d-flex justify-content-between">
+                            {{ msgs }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>
+                        {% endif %}
+                        <div class="container text-center">
+                            <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#add">
+                                Add Products
+                            </button>          
+                        </div>
+                         <div class="modal" id="add" tabindex="-1">
+                             <div class="modal-dialog">
+                               <div class="modal-content">
+                                 <div class="modal-header">
+                                   <h5 class="modal-title">Add Products</h5>
+                                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                 </div>
+                                 <div class="modal-body">
+                                   <form action="/admin/add_products" method="post">
+                                     <div class="mb-3">
+                                         <label class="form-label">
+                                             Name:
+                                         </label>
+                                         <input type="text" name="name" class="form-control" required>
+                                     </div>
+                                     <div class="mb-3">
+                                         <label class="form-label">
+                                             Description:
+                                         </label>
+                                         <textarea class="form-control" name="description" rows="3"></textarea>
+                                     </div>
+                                     <div class="mb-3">
+                                         <label class="form-label">
+                                             price:
+                                         </label>
+                                         <input type="number" name="price" class="form-control" required>
+                                     </div>
+                                     <div class="mb-3">
+                                         <label class="form-label">
+                                             stocks:
+                                         </label>
+                                         <input type="number" name="stocks" class="form-control" required>
+                                     </div>
+                                     <div class="mb-3">
+                                         <label class="form-label">
+                                             Category:
+                                         </label>
+                                         <select class="form-select" name="category" aria-label="Default select example">
+                                             <option selected value="cellphone">Cellphone</option>
+                                             <option value="tablet">Tablet</option>
+                                             <option value="laptop">Laptop</option>
+                                             <option value="desktop">Desktop</option>
+                                             <option value="camera">Camera</option>
+                                             <option value="smartwatch">Smart Watch</option>
+                                           </select>
+                                     </div>
+                                     <div class="mb-3 text-center">
+                                         <button type="submit" class="btn btn-warning">
+                                             Upload
+                                         </button>
+                                         <button type="reset" class="btn btn-secondary">Clear</button>
+                                     </div>
+                                   </form>
+                                 </div>
+                               </div>
+                             </div>
+                           </div>
+                           <!--End of Add Modal-->
+                     </div>
 
-                    <!-- Content Row -->
-                    <div class="row">
+                    <!-- Data-Products Example -->
+                    <div class="row g-3">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Products Data</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Item Name</th>
+                                                <th>Description</th>
+                                                <th>Price</th>
+                                                <th>Stocks</th>
+                                                <th>Category</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for i in items %}
+                                            <tr>
+                                                <td>{{i[1]}}</td><!--fname-->
+                                                <td>{{i[2]}}</td><!--lname-->
+                                                <td>{{i[3]}}</td><!--contacts-->
+                                                <td>{{i[4]}}</td><!--address-->
+                                                <td>{{i[5]}}</td><!--email-->
 
-                        <!-- Grow In Utility -->
-                        <div class="col-lg-6">
-
-                            <div class="card position-relative">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Grow In Animation Utilty</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <code>.animated--grow-in</code>
-                                    </div>
-                                    <div class="small mb-1">Navbar Dropdown Example:</div>
-                                    <nav class="navbar navbar-expand navbar-light bg-light mb-4">
-                                        <a class="navbar-brand" href="#">Navbar</a>
-                                        <ul class="navbar-nav ml-auto">
-                                            <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
-                                                    role="button" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                    Dropdown
-                                                </a>
-                                                <div class="dropdown-menu dropdown-menu-right animated--grow-in"
-                                                    aria-labelledby="navbarDropdown">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another action</a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item" href="#">Something else here</a>
+                                                <td>
+                                                    <div class="d-flex align-items-center justify-content-center">
+                                                        <button type="button" class="btn btn-warning"
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#edit{{i[0]}}"
+                                                        >Edit</button>
+                                                        <form action="{{ url_for('manage_products')}}" method="post">
+                                                            <input type="hidden" name="product_id" value="{{i[0]}}">
+                                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <!-- Edit Modal -->
+                                            <div class="modal" id="edit{{i[0]}}" tabindex="-1">
+                                                <div class="modal-dialog">
+                                                  <div class="modal-content">
+                                                    <div class="modal-header">
+                                                      <h5 class="modal-title">Update Info</h5>
+                                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form action="{{ url_for('manage_products')}}" method="post">
+                                                            <div class="mb-3">
+                                                                <input type="hidden" name="product_edit_id" value="{{i[0]}}">
+                                                                <label class="form-label">
+                                                                    Name:
+                                                                </label>
+                                                                <input type="text" name="name" class="form-control" value="{{i[1]}}" required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">
+                                                                    Description:
+                                                                </label>
+                                                                <textarea class="form-control" name="description" rows="3">{{i[2]}}</textarea>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">
+                                                                    price:
+                                                                </label>
+                                                                <input type="number" name="price" class="form-control" value="{{i[3]}}" required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">
+                                                                    stocks:
+                                                                </label>
+                                                                <input type="number" name="stocks" class="form-control" value="{{i[4]}}" required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">
+                                                                    Category:
+                                                                </label>
+                                                                <select class="form-select" name="category" aria-label="Default select example">
+                                                                    <option selected value="cellphone">Cellphone</option>
+                                                                    <option value="tablet">Tablet</option>
+                                                                    <option value="laptop">Laptop</option>
+                                                                    <option value="desktop">Desktop</option>
+                                                                    <option value="camera">Camera</option>
+                                                                    <option value="smartwatch">Smart Watch</option>
+                                                                  </select>
+                                                            </div>
+                                                            <div class="mb-3 text-center">
+                                                                <button type="submit" class="btn btn-warning">
+                                                                    Upload
+                                                                </button>
+                                                                <button type="reset" class="btn btn-secondary">Clear</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                  </div>
                                                 </div>
-                                            </li>
-                                        </ul>
-                                    </nav>
-                                    <p class="mb-0 small">Note: This utility animates the CSS transform property,
-                                        meaning it will override any existing transforms on an element being animated!
-                                        In this theme, the grow in animation is only being used on dropdowns within the
-                                        navbar.</p>
+                                              </div>
+                                             <!-- End of Edit modal -->
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-
                         </div>
-
-                        <!-- Fade In Utility -->
-                        <div class="col-lg-6">
-
-                            <div class="card position-relative">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Fade In Animation Utilty</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <code>.animated--fade-in</code>
-                                    </div>
-                                    <div class="small mb-1">Navbar Dropdown Example:</div>
-                                    <nav class="navbar navbar-expand navbar-light bg-light mb-4">
-                                        <a class="navbar-brand" href="#">Navbar</a>
-                                        <ul class="navbar-nav ml-auto">
-                                            <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
-                                                    role="button" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                    Dropdown
-                                                </a>
-                                                <div class="dropdown-menu dropdown-menu-right animated--fade-in"
-                                                    aria-labelledby="navbarDropdown">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another action</a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item" href="#">Something else here</a>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </nav>
-                                    <div class="small mb-1">Dropdown Button Example:</div>
-                                    <div class="dropdown mb-4">
-                                        <button class="btn btn-primary dropdown-toggle" type="button"
-                                            id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                                            aria-expanded="false">
-                                            Dropdown
-                                        </button>
-                                        <div class="dropdown-menu animated--fade-in"
-                                            aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
-                                    <p class="mb-0 small">Note: This utility animates the CSS opacity property, meaning
-                                        it will override any existing opacity on an element being animated!</p>
-                                </div>
-                            </div>
-
-                        </div>
-
                     </div>
 
                 </div>
@@ -517,7 +601,15 @@
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <script src="/static/js/sb-admin-2.min.js"></script>
+    <script src="/static/js/sb-admin-2.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="js/demo/datatables-demo.js"></script>
 
 </body>
 

@@ -20,21 +20,6 @@ def shop():
 def aboutUs():
     return render_template('aboutUs.html')
 
-@app.route('/add', methods = ['POST'])
-def addProducts():
-    if request.method == 'POST':
-        itemsInput = (
-            request.form['name'],
-            request.form['description'],
-            request.form['price'],
-            request.form['stocks'],
-            request.form['category']
-        )
-        sql_addItem(itemsInput)
-        return redirect(url_for('shop', msgs = 'successful added!'))
-    
-    return redirect(url_for('shop'))
-
 @app.route('/admin')
 def admin():
     return render_template('/admin/index.html')
@@ -42,7 +27,7 @@ def admin():
 @app.route('/admin/customer_table')
 def customer_table():
     customer = customer_query()
-    return render_template('/admin/tables.html', customer = customer)
+    return render_template('/admin/tables_accounts.html', customer = customer)
 
 @app.route('/admin/customer_table', methods = ['POST', 'GET'])
 def manage_customer():
@@ -110,13 +95,75 @@ def update_customer_sql(customer_edit_info):
     con.commit()
     con.close()
 
+@app.route('/admin/products')
+def products_table():
+    items = query_items()
+    return render_template('/admin/tables_products.html', items = items)
+
+@app.route('/admin/products', methods = ['POST'])
+def manage_products():
+    if request.method == 'POST':
+        if 'product_id' in request.form:  # Handle delete
+            product_id = request.form['product_id']
+            delete_product_sql(product_id)
+        elif 'product_edit_id' in request.form:  # Handle update
+            product_edit_info = (
+            request.form['name'],
+            request.form['description'],
+            request.form['price'],
+            request.form['stocks'],
+            request.form['category'],
+            request.form['product_edit_id']
+            )
+            update_product_sql(product_edit_info)
+        return redirect(url_for('products_table'))
+    
+    return redirect(url_for('products_table'))
+
+@app.route('/admin/add_products', methods = ['POST'])
+def add_products():
+    if request.method == 'POST':
+        itemsInput = (
+            request.form['name'],
+            request.form['description'],
+            request.form['price'],
+            request.form['stocks'],
+            request.form['category']
+        )
+        sql_addItem(itemsInput)
+        return redirect(url_for('products_table'))
+    
+    return redirect(url_for('products_table'))
+
+
 def sql_addItem(itemsInput):
     con = connection_prod()
     c = con.cursor()
 
-    sql = 'INSERT INTO items (item_name, description, price, stock, category) VALUES (?,?,?,?,?)'
+    sql = 'INSERT INTO items (item_name, item_description, item_price, item_stock, item_category) VALUES (?,?,?,?,?)'
 
     c.execute(sql, itemsInput)
+    con.commit()
+    con.close()
+
+def delete_product_sql(product_id): #delete product
+    con = connection_prod()
+    c = con.cursor()
+
+    sql = 'DELETE FROM items WHERE item_id=?'
+    c.execute(sql, (product_id,))
+
+    con.commit()
+    con.close()
+
+def update_product_sql(product_edit_info):
+    con = connection_prod()
+    c = con.cursor()
+
+    sql = '''UPDATE items SET item_name = ?, item_description = ?, item_price = ?, item_stock = ?, item_category = ? WHERE item_id = ?'''
+    
+    c.execute(sql, product_edit_info)
+
     con.commit()
     con.close()
 
@@ -159,7 +206,7 @@ def login_validation():
     verify = validate(acc_validate)
 
     if len(verify) > 0:
-        return redirect(url_for('shop'))
+        return redirect(url_for('admin'))
     else:
         return render_template('login.html', wrong = 'Wrong Email or Password')
 
@@ -174,9 +221,6 @@ def validate(acc_validate):
     con.close()
 
     return verify
-
-
-
 
 @app.route('/signup')
 def signup():

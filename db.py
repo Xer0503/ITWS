@@ -1,21 +1,18 @@
 from connection import connection_prod, connection_acc
 def create():
-    con = connection_acc()
+    con = connection_prod()
     c = con.cursor()
     c.execute(
         """
-    CREATE TABLE customer (
-    customer_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    phone VARCHAR(12),
-    address VARCHAR(100),
-    email VARCHAR(100) UNIQUE,
-    password VARCHAR(50),
-    role VARCHAR(5),
-    is_active BOOLEAN
-)
-"""        
+    CREATE TABLE items (
+    item_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    item_name VARCHAR(50),
+    item_description TEXT,
+    item_price REAL,
+    item_stock INTEGER,
+    item_category VARCHAR(50)
+    )
+    """        
     )
     con.commit()
     con.close()
@@ -57,11 +54,11 @@ def query_feedback():
     return data
 
 def addItems():
-    con = connection_acc()
+    con = connection_prod()
     c = con.cursor()
 
     c.execute("""
-        INSERT INTO items (item_name, description, category, price, stock) 
+        INSERT INTO items (item_name, item_description, item_category, item_price, item_stock) 
         VALUES 
             ('ROG Laptop', 'Ultra Duper Smooth Gaming laptop', 'laptop', 20000.99, 35), 
             ('Digital Camera', 'Ultra Duper Smooth high Quality Photos', 'camera', 15000.20, 99),
@@ -81,11 +78,11 @@ def deleteItems():
     con.close()
 
 def dropTable():
-    con = connection_acc()
+    con = connection_prod()
     c = con.cursor()
 
     c.execute("""
-        DROP TABLE customer
+        DROP TABLE items
         """)
     con.commit()
     con.close()
@@ -103,4 +100,12 @@ def query_customer():
     for i in customer:
         print('fetch customer: ', i)
 
-query_customer()
+def addColumn():
+    con = connection_prod()
+    c = con.cursor()
+
+    c.execute("""
+        ALTER TABLE items ADD COLUMN timestamp DATETIME
+    """)
+    con.commit()
+    con.close()
