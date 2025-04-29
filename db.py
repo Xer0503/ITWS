@@ -4,10 +4,12 @@ def create():
     c = con.cursor()
     c.execute(
         """
-    CREATE TABLE admin (
+    CREATE TABLE customer (
     customer_id INTEGER PRIMARY KEY AUTOINCREMENT,
     first_name VARCHAR(50),
     last_name VARCHAR(50),
+    phone VARCHAR(12),
+    address VARCHAR(100),
     email VARCHAR(100) UNIQUE,
     password VARCHAR(50),
     role VARCHAR(5),
@@ -83,7 +85,22 @@ def dropTable():
     c = con.cursor()
 
     c.execute("""
-        DROP TABLE items
+        DROP TABLE customer
         """)
     con.commit()
     con.close()
+
+def query_customer():
+    con = connection_acc()
+    c = con.cursor()
+    sql = 'SELECT * FROM customer'
+    c.execute(sql)
+
+    customer = c.fetchall()
+    con.commit()
+    con.close()
+
+    for i in customer:
+        print('fetch customer: ', i)
+
+query_customer()

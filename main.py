@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, url_for, redirect
 from connection import connection_prod, connection_acc
 from db import query_items, query_feedback
+from customer_query import customer_query
 
 app = Flask(__name__)
 
@@ -33,6 +34,81 @@ def addProducts():
         return redirect(url_for('shop', msgs = 'successful added!'))
     
     return redirect(url_for('shop'))
+
+@app.route('/admin')
+def admin():
+    return render_template('/admin/index.html')
+
+@app.route('/admin/customer_table')
+def customer_table():
+    customer = customer_query()
+    return render_template('/admin/tables.html', customer = customer)
+
+@app.route('/admin/customer_table', methods = ['POST', 'GET'])
+def manage_customer():
+    if request.method == 'POST':
+        if 'customer_id' in request.form:  # Handle delete
+            customer_id = request.form['customer_id']
+            delete_customer_sql(customer_id)
+        elif 'customer_edit_id' in request.form:  # Handle update
+            customer_edit_info = (
+                request.form['first_name'],
+                request.form['last_name'],
+                request.form['phone'],
+                request.form['address'],
+                request.form['email'],
+                request.form['password'],
+                request.form['role'],
+                1 if request.form['status'] == 'active' else 0,
+                request.form['customer_edit_id']
+            )
+            update_customer_sql(customer_edit_info)
+        return redirect(url_for('customer_table'))
+    
+    return redirect(url_for('customer_table'))
+
+def delete_customer_sql(customer_id):
+    con = connection_acc()
+    c = con.cursor()
+
+    sql = 'DELETE FROM customer WHERE customer_id=?'
+    c.execute(sql, (customer_id,))
+
+    con.commit()
+    con.close()
+
+@app.route('/admin/customer_table', methods = ['POST', 'GET'])
+def update_customer():
+    if request.method == 'POST':
+        customer_edit_info = (
+        request.form['first_name'],
+        request.form['last_name'],
+        request.form['phone'],
+        request.form['address'],
+        request.form['email'],
+        request.form['password'],
+        request.form['role'],
+        1 if request.form['status'] == 'active' else 0,
+        request.form['customer_edit_id']
+        )
+
+        update_customer_sql(customer_edit_info)
+        return redirect(url_for('customer_table'))
+    
+    return redirect(url_for('customer_table'))
+
+def update_customer_sql(customer_edit_info):
+    con = connection_acc()
+    c = con.cursor()
+
+    sql = '''UPDATE customer 
+         SET first_name = ?, last_name = ?, phone = ?, address = ?, email = ?, password = ?, role = ?, is_active = ?  
+         WHERE customer_id = ?'''
+
+    c.execute(sql, customer_edit_info)
+
+    con.commit()
+    con.close()
 
 def sql_addItem(itemsInput):
     con = connection_prod()
@@ -128,7 +204,7 @@ def signup_add(user_acc):
     con = connection_acc()
     c = con.cursor()
 
-    sql = 'INSERT INTO customer(first_name, last_name, contacts, address, email, password, role, is_active) VALUES (?,?,?,?,?,?,?,?)'
+    sql = 'INSERT INTO customer(first_name, last_name, phone, address, email, password, role, is_active) VALUES (?,?,?,?,?,?,?,?)'
     c.execute(sql, user_acc)
 
     con.commit()
