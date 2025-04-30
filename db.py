@@ -123,4 +123,3 @@ def addAdmin():
     con.commit()
     con.close()
     
-query_customer()
