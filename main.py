@@ -315,7 +315,7 @@ def signup_add(user_acc):
     con.commit()
     con.close()
 
-@app.route('/logout', methods=['POST'])
+@app.route('/logout', methods=['POST', 'GET'])
 def logout():
     con = connection_acc()
     cursor = con.cursor()

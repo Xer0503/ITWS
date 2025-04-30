@@ -1,4 +1,3 @@
-import sqlite3
 from connection import connection_acc
 
 def customer_query():
