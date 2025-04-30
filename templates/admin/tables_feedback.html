@@ -189,106 +189,32 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Customer Data</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Feedback Data</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                                <table class="table table-bordered table-hover text-center" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>First Name</th>
-                                            <th>Last Name</th>
-                                            <th>Contacts</th>
-                                            <th>Address</th>
-                                            <th>Email</th>
-                                            <th>Password</th>
-                                            <th>Role</th>
-                                            <th>Status</th>
+                                            <th>Name</th>
+                                            <th>Feedback</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for i in customer %}
+                                        {% for i in comments %}
                                         <tr>
-                                            <td>{{i[1]}}</td><!--fname-->
-                                            <td>{{i[2]}}</td><!--lname-->
-                                            <td>{{i[3]}}</td><!--contacts-->
-                                            <td>{{i[4]}}</td><!--address-->
-                                            <td>{{i[5]}}</td><!--email-->
-                                            <td>{{i[6]}}</td><!--password-->
-                                            <td>{{i[7]}}</td><!--role-->
-                                            <td>{{ 'Active' if i[8] == 1 else 'Offline' }}</td><!--status-->
+                                            <td>{{i[1]}}</td>
+                                            <td>{{i[2]}}</td>
                                             <td>
-                                                <div class="d-flex align-items-center justify-content-evenly">
-                                                    <button type="button" class="btn btn-warning btn-sm px-3"
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#edit{{i[0]}}"
-                                                    >Edit</button>
-                                                    <form action="{{ url_for('manage_customer')}}" method="post">
-                                                        <input type="hidden" name="customer_id" value="{{i[0]}}">
+                                                <div class="d-flex align-items-center justify-content-center">
+                                                    <form action="{{ url_for('delete_feedback')}}" method="post">
+                                                        <input type="hidden" name="feedback_id" value="{{i[0]}}">
                                                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                                                     </form>
                                                 </div>
                                             </td>
                                         </tr>
-                                        <!-- Edit Modal -->
-                                        <div class="modal" id="edit{{i[0]}}" tabindex="-1">
-                                            <div class="modal-dialog">
-                                              <div class="modal-content">
-                                                <div class="modal-header">
-                                                  <h5 class="modal-title">Update Info</h5>
-                                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <form action="{{ url_for('manage_customer')}}" method="post">
-                                                        <div class="mb-3">
-                                                            <input type="hidden" name="customer_edit_id" value="{{i[0]}}">
-                                                            <label for="first_name{{i[0]}}" class="form-label">First Name</label>
-                                                            <input type="text" id="first_name{{i[0]}}" name="first_name" class="form-control" placeholder="First Name" value="{{i[1]}}" required>
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label for="last_name{{i[0]}}" class="form-label">Last Name</label>
-                                                            <input type="text" id="last_name{{i[0]}}" name="last_name" class="form-control" placeholder="Last Name" value="{{i[2]}}" required>
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label for="phone{{i[0]}}" class="form-label">Phone Number</label>
-                                                            <input type="text" id="phone{{i[0]}}" name="phone" class="form-control" placeholder="Phone Number" value="{{i[3]}}" required>
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label for="address{{i[0]}}" class="form-label">Home Address</label>
-                                                            <input type="text" id="address{{i[0]}}" name="address" class="form-control" placeholder="Home Address" value="{{i[4]}}" required>
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label for="email{{i[0]}}" class="form-label">Email Address</label>
-                                                            <input type="email" id="email{{i[0]}}" name="email" class="form-control" placeholder="Email address" value="{{i[5]}}" required>
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label for="password{{i[0]}}" class="form-label">Password</label>
-                                                            <input type="text" id="password{{i[0]}}" name="password" class="form-control" placeholder="Password" value="{{i[6]}}" required>
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label for="role{{i[0]}}" class="form-label">Role</label>
-                                                            <select id="role{{i[0]}}" class="form-select" name="role" aria-label="Default select example">
-                                                                <option value="user">User</option>
-                                                                <option value="admin">Admin</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label for="status{{i[0]}}" class="form-label">Status</label>
-                                                            <select id="status{{i[0]}}" class="form-select" name="status" aria-label="Default select example">
-                                                                <option value="active">Active</option>
-                                                                <option value="offline">Offline</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="mb-3 text-center">
-                                                            <button type="submit" class="btn btn-warning">Update</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </div>
-                                         <!-- End of Edit modal -->
                                         {% endfor %}
                                     </tbody>
                                 </table>

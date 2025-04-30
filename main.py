@@ -196,10 +196,30 @@ def addFeedback(comment):
     con.commit()
     con.close()
 
-@app.route('/showFeedback')
-def feedbackSection():
+@app.route('/admin/feedback')
+def feedback_table():
     comments = query_feedback()
-    return render_template('feedback.html', comments = comments)
+    return render_template('/admin/tables_feedback.html', comments = comments)
+
+@app.route('/admin/feedback', methods = ['POST'])
+def delete_feedback():
+    if request.method == 'POST':
+        feedback_id = request.form['feedback_id']
+        delete_feedback_sql(feedback_id)
+        return redirect(url_for('feedback_table'))
+    
+    return redirect(url_for('feedback_table'))
+
+def delete_feedback_sql(feedback_id):
+    con = connection_prod()
+    c = con.cursor()
+
+    sql = 'DELETE FROM feedback WHERE id=?'
+    c.execute(sql, (feedback_id,))
+
+    con.commit()
+    con.close()
+
 
 @app.route('/login')
 def login():
@@ -216,7 +236,6 @@ def login_validation():
         cursor.execute("SELECT * FROM customer WHERE email = ? AND password = ?", (email, password))
         user = cursor.fetchone()
 
-        # If not found in customer table, check admin table
         if not user:
             cursor.execute("SELECT * FROM admin WHERE email = ? AND password = ?", (email, password))
             user = cursor.fetchone()
@@ -224,16 +243,20 @@ def login_validation():
             session['last_name'] = user[2] 
 
         if user:
-            # Store user details in session
-            session['user_id'] = user[0]  # Assuming 0 is user_id
+            session['user_id'] = user[0]  # Index of new fetch data of array
             session['first_name'] = user[1]
-            session['last_name'] = user[2]    # Assuming 1 is email
+            session['last_name'] = user[2] 
 
-            # Adjust index based on the table
-            if len(user) > 7:  # This means it's the 'customer' table
-                session['role'] = user[7]  # Role is at index 7 in customer table
+            user_id = session.get('user_id')
+
+            cursor.execute("UPDATE customer SET is_active = 1 WHERE customer_id = ?", (user_id,))
+            con.commit()
+            con.close()
+
+            if len(user) > 7: 
+                session['role'] = user[7] 
             else:  # It's the 'admin' table
-                session['role'] = user[5]  # Role is at index 5 in admin table
+                session['role'] = user[5]
 
             # Redirect based on role
             if session['role'] == 'admin':
@@ -294,7 +317,17 @@ def signup_add(user_acc):
 
 @app.route('/logout', methods=['POST'])
 def logout():
-    session.clear()  # Clears all session data
+    con = connection_acc()
+    cursor = con.cursor()
+    user_id = session.get('user_id')
+    role = session.get('role')
+
+    # Mark user as inactive in the DB
+    if role == 'user':
+        cursor.execute("UPDATE customer SET is_active = 0 WHERE customer_id = ?", (user_id,))
+    
+    con.commit()
+    session.clear()
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
