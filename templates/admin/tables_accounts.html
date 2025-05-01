@@ -83,6 +83,15 @@
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 
+            <div class="sidebar-heading">
+                About Us
+            </div>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('developer') }}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Developers</span></a>
+            </li>
+
             
         </ul>
         <!-- End of Sidebar -->
@@ -157,19 +166,14 @@
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item"
+                                    type="button" 
+                                    data-bs-toggle="modal" data-bs-target="#profile">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Settings
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Activity Log
-                                </a>
                                 <div class="dropdown-divider"></div>
+
                                 <div class="text-left ml-4">
                                     <button type="button" class="text-gray-600 border-0 bg-light text-center rounded"
                                     data-bs-toggle="modal" data-bs-target="#logout"
@@ -182,6 +186,27 @@
 
                 </nav>
                 <!-- End of Topbar -->
+
+                <!-- Profile Modal -->
+                <div class="modal" id="profile" tabindex="-1">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title">Profile Account</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="d-flex flex-column align-items-center py-3">
+                            <img src="/static/images/img/undraw_profile.svg" class="profile-img rounded-circle w-50" alt="{{ session['first_name'] }}">
+                            <h5 class="text-center mt-3">{{ session['first_name'] }} {{ session['last_name'] }}</h5>
+                            <span>
+                                <i class="bi bi-check-circle-fill"></i> {{ session['role'] }}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">

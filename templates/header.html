@@ -42,7 +42,10 @@
               </a>
               <ul class="dropdown-menu">
                 {% if session['first_name'] %}
-                <li><a class="dropdown-item" href="#contacts">Profile</a></li>
+                <li><a class="dropdown-item "
+                  type="button" 
+                  data-bs-toggle="modal" data-bs-target="#profile"
+                  >Profile</a></li>
                 <li><a class="dropdown-item" href="{{url_for('logout')}}">Logout</a></li>
                 {% else %}
                 <li><a class="dropdown-item" href="{{url_for('login')}}">Login</a></li>
@@ -55,5 +58,32 @@
       </div>
     </div>
   </nav>
+
+  <!--Profile Account Card-->
+  <div class="modal" id="profile" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Profile Account</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex flex-column align-items-center py-3">
+            <img src="/static/images/img/undraw_profile_2.svg" class="profile-img rounded-circle w-50" alt="{{ session['first_name'] }}">
+            <h5 class="text-center mt-3">{{ session['first_name'] }} {{ session['last_name'] }}</h5>
+            <span>
+              <i class="bi bi-geo-alt-fill"></i> {{ session['address'] }}
+            </span>
+            <span>
+              <i class="bi bi-envelope-fill"></i> {{ session['email'] }}
+            </span>
+            <span>
+              <i class="bi bi-telephone-fill"></i> {{ session['phone'] }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 {% endblock %}

@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, url_for, redirect, session
 from connection import connection_prod, connection_acc
 from db import query_items, query_feedback
-from customer_query import customer_query
+from customer_query import customer_query, active_customer
+from products_query import query_items, query_feedback
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -17,17 +18,30 @@ def shop():
     if 'role' in session and session['role'] == 'user':
         return render_template('shopPage.html', data=data)
     else:
-        return redirect(url_for('admin'))  # or show error
+        return redirect(url_for('login'))
 
 
 @app.route('/devs')
 def aboutUs():
-    return render_template('aboutUs.html')
+    return render_template('developer_user_side.html')
+
+@app.route('/admin/devs')
+def developer():
+    return render_template('/admin/developers.html')
 
 @app.route('/admin')
 def admin():
+    total_customers = customer_query()
+    total_active_customers = active_customer()
+    total_items = query_items()
+    total_feedback = query_feedback()
     if 'role' in session and session['role'] == 'admin':
-        return render_template('/admin/index.html')
+        return render_template('/admin/index.html', 
+                               total_customers = total_customers, 
+                               total_active_customers = total_active_customers,
+                               total_items = total_items,
+                               total_feedback = total_feedback
+                               )
     else:
         return redirect(url_for('home'))  # or 403 error if preferred
 
@@ -240,15 +254,19 @@ def login_validation():
             cursor.execute("SELECT * FROM admin WHERE email = ? AND password = ?", (email, password))
             user = cursor.fetchone()
             session['first_name'] = user[1]
-            session['last_name'] = user[2] 
+            session['last_name'] = user[2]
+            session['email'] = user[3]  
 
         if user:
-            session['user_id'] = user[0]  # Index of new fetch data of array
+            session['user_id'] = user[0]
             session['first_name'] = user[1]
-            session['last_name'] = user[2] 
+            session['last_name'] = user[2]
+            session['phone'] = user[3]
+            session['address'] = user[4]
+            session['email'] = user[5]
+
 
             user_id = session.get('user_id')
-
             cursor.execute("UPDATE customer SET is_active = 1 WHERE customer_id = ?", (user_id,))
             con.commit()
             con.close()

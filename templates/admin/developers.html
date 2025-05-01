@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Admin - Dashboard</title>
+    <title> {% block title %} Admin | Developers {% endblock %} </title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -166,109 +166,47 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
-                    </div>
-
-                    <!-- Content Row -->
-                    <div class="row">
-
-                        <!-- Total Customer -->
-                        <div class="col-xl-6 col-md-6 mb-4">
-                            <a href="{{url_for('customer_table')}}" class="text-decoration-none">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-lg font-weight-bold text-primary text-uppercase mb-1">
-                                                Total Of Customers</div>
-                                            <div class="h3 mb-0 font-weight-bold text-gray-800 text-center"> 
-                                                {{ total_customers|length }}
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                        </div>
+                    <section class="p-3">
+                        <h3 class="text-center fw-bold">DEVELOPERS</h3>
+                        <h6 class="text-center">BSIT 1-F</h6>
+                        <p class="secondary text-center w-75 mx-auto">
+                            The system project was made possible through the collaborative efforts of all team members, each contributing essential resources and playing key roles in both the development and documentation process.
+                        </p>
+                        <div class="row g-3 p-5 text-center">
+                            <div class="col-12 col-lg-3 col-md-4">
+                                <div class="card shadow">
+                                    <img src="/static/images/rexie.png" class="card-img-top dev" alt="rexie">
+                                    <div class="card-body">
+                                        <h6 class="card-title"> Rexie Villanueva </h6>
                                     </div>
                                 </div>
                             </div>
-                            </a>
-                        </div>
-
-                        <!-- Total Active Account -->
-                        <div class="col-xl-6 col-md-6 mb-4">
-                            <a href="{{url_for('customer_table')}}" class="text-decoration-none">
-                            <div class="card border-left-success shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-lg font-weight-bold text-success text-uppercase mb-1">
-                                                Total Actives</div>
-                                            <div class="h3 text-center mb-0 font-weight-bold text-gray-800">
-                                                {{ total_active_customers|length }}
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                                        </div>
+                            <div class="col-12 col-lg-3 col-md-4">
+                                <div class="card shadow">
+                                    <img src="/static/images/rain.png" class="card-img-top dev" alt="rain">
+                                    <div class="card-body">
+                                        <h6 class="card-title"> Rain Santiago </h6>
                                     </div>
                                 </div>
                             </div>
-                            </a>
-                        </div>
-
-                        <!-- Total Products -->
-                        
-                        <div class="col-xl-6 col-md-6 mb-4">
-                            <a href="{{url_for('products_table')}}" class="text-decoration-none">
-                            <div class="card border-left-danger shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-lg font-weight-bold text-danger text-uppercase mb-1">
-                                                Total Products</div>
-                                            <div class="h3 text-center mb-0 font-weight-bold text-gray-800">
-                                                {{ total_items|length }}
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                                        </div>
+                            <div class="col-12 col-lg-3 col-md-4">
+                                <div class="card shadow">
+                                    <img src="/static/images/trisha.png" class="card-img img-fluid h-100" alt="trisha">
+                                    <div class="card-body">
+                                        <h6 class="card-title"> Trisha Ann Santos </h6>
                                     </div>
                                 </div>
                             </div>
-                            </a>
-                        </div>
-                        <!-- Total Feedback -->
-                        <div class="col-xl-6 col-md-6 mb-4">
-                            <a href="{{url_for('feedback_table')}}" class="text-decoration-none">
-                            <div class="card border-left-warning shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-lg font-weight-bold text-warning text-uppercase mb-1">
-                                                Total Feedback</div>
-                                            <div class="h3 text-center mb-0 font-weight-bold text-gray-800"> {{ total_feedback|length }} </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
-                                        </div>
+                            <div class="col-12 col-lg-3 col-md-4 mx-auto">
+                                <div class="card shadow">
+                                    <img src="/static/images/reyneil.png" class="card-img-top dev" alt="reyneil">
+                                    <div class="card-body">
+                                        <h6 class="card-title"> Reyneil De Guzman </h6>
                                     </div>
                                 </div>
                             </div>
-                            </a>    
                         </div>
-                    </div>
-
-                    <!-- Content Row -->
-
-                    <div class="row">
-                    </div>
-
+                    </section>
                 </div>
                 <!-- /.container-fluid -->
 
