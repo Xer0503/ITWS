@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %} View Order {% endblock %}
+
+{% block content %}
+    {% include 'header.html' %}
+
+
+    <section class="p-5">
+        <div class="container shadow rounded p-5">
+            {% if orders %}
+                <h5 class="text-center mt-3 mb-5">Your Orders</h5>
+                <div class="row g-3">
+                    {% for i in orders %}
+                        <div class="col-12 col-lg-3 col-md-4">
+                            <div class="card rounded shadow-sm">
+                                <div class="card-body">
+                                    <p class="card-text">
+                                        Quantity: {{ i[3] }}
+                                    </p>
+                                    <p class="card-text">
+                                        Price that you need to prepared: <span class="fw-bold">₱{{ i[4] }}</span>
+                                    </p>
+                                    <p class="card-text">
+                                        <i class="bi bi-box-seam"></i> date: {{ i[5] }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}    
+                </div>    
+            {% else %}
+                <h5 class="text-center mt-3 mb-5">No Orders Found</h5>
+                <div class="d-flex justify-content-center">
+                    <a href="{{url_for('shop')}}" class="btn btn-warning btn-sm rounded px-5">Shop Now</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+
+    {% include 'footer.html' %}
+{% endblock %}

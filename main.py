@@ -370,9 +370,36 @@ def add_order(customer_id, item_id, quantity, total_price):
 
     return redirect(url_for('shop'))
 
-@app.route('/view/order', methods=['POST', 'GET'])
-def method_name():
-    pass
+@app.route('/view/order')
+def view_order():
+    orders = view_order_customer()
+    return render_template('view_order.html', orders=orders)
+
+def view_order_customer():
+    con = connection_order()
+    c = con.cursor()
+
+    sql = 'SELECT * FROM order_details WHERE customer_id=?'
+    c.execute(sql, (session['user_id'],))
+    orders = c.fetchall()
+    con.commit()
+    con.close()
+
+    return orders
+
+def fetch_item_details():
+    item_detail = view_order_customer()
+    item_id = item_detail
+    con = connection_prod()
+    c = con.cursor()
+
+    sql = 'SELECT * FROM items'
+    c.execute(sql)
+    items = c.fetchall()
+    con.commit()
+    con.close()
+
+    return items
 
 if __name__ == '__main__':
     app.run(debug=True)
