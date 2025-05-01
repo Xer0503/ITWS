@@ -1,11 +1,11 @@
 from flask import Flask, render_template, request, url_for, redirect, session
-from connection import connection_prod, connection_acc
+from connection import connection_prod, connection_acc, connection_order
 from db import query_items, query_feedback
 from customer_query import customer_query, active_customer
 from products_query import query_items, query_feedback
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+app.secret_key = 'secret_key'
 
 @app.route('/')
 @app.route('/home')
@@ -234,7 +234,6 @@ def delete_feedback_sql(feedback_id):
     con.commit()
     con.close()
 
-
 @app.route('/login')
 def login():
     return render_template('login.html')
@@ -273,7 +272,7 @@ def login_validation():
 
             if len(user) > 7: 
                 session['role'] = user[7] 
-            else:  # It's the 'admin' table
+            else:
                 session['role'] = user[5]
 
             # Redirect based on role
@@ -347,6 +346,33 @@ def logout():
     con.commit()
     session.clear()
     return redirect(url_for('login'))
+
+@app.route('/buy_items', methods=['POST'])
+def buy_items():
+    customer_id = session['user_id']
+    item_id = request.form['item_id']
+    item_price = request.form['item_price']
+    quantity = request.form['quantity']
+    total_price = float(item_price) * float(quantity)
+    add_order(customer_id, item_id, quantity, total_price)
+
+    return redirect(url_for('shop'))
+
+def add_order(customer_id, item_id, quantity, total_price):
+    con = connection_order()
+    c = con.cursor()
+
+    sql = 'INSERT INTO order_details (customer_id, item_id, order_quantity, order_price) VALUES (?, ?, ?, ?)'
+    c.execute(sql, (customer_id, item_id, quantity, total_price))
+
+    con.commit()
+    con.close()
+
+    return redirect(url_for('shop'))
+
+@app.route('/view/order', methods=['POST', 'GET'])
+def method_name():
+    pass
 
 if __name__ == '__main__':
     app.run(debug=True)

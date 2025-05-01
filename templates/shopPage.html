@@ -26,8 +26,10 @@
                             </p>
                             <p><i class="bi bi-truck text-warning"></i> Free Shipping Fee</p>
                             <div class="d-flex justify-content-start">
-                                <button class="btn btn-warning mx-2">
-                                    <i class="bi bi-bag-plus-fill me-1"></i> Buy
+                                <button class="btn btn-warning mx-2"
+                                    data-bs-toggle="modal" data-bs-target="#buy{{i[0]}}">
+                                    <i class="bi bi-bag-plus-fill me-1"></i> 
+                                    Buy
                                 </button>
                                 <button class="btn btn-secondary">
                                     <i class="bi bi-cart-plus me-1"></i> Cart
@@ -36,8 +38,46 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Buy Modal -->
+                <div class="modal" id="buy{{i[0]}}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">{{ i[1] }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="d-flex justify-content-center mb-3">
+                                    <img src="/static/images/{{i[5]}}.png" class="card-img-top w-50" alt="{{ i[1] }}">
+                                </div>
+                                <p class="card-text">
+                                    {{ i[2] }}
+                                </p>
+                                <p class="card-text">
+                                    Price: <span class="fw-bold">₱{{ i[3] }}</span>
+                                </p>
+                                <p class="card-text">
+                                    <i class="bi bi-box-seam"></i> Stocks: {{ i[4] }}
+                                </p>
+                                <p><i class="bi bi-truck text-warning"></i> Free Shipping Fee</p>
+                                <form action="{{ url_for('buy_items') }}" method="POST">
+                                    <div class="mb-3">
+                                        <label for="quantity" class="form-label">Quantity</label>
+                                        <input type="number" class="form-control w-25" name="quantity" min="1" max="{{ i[4] }}" value="1" required>
+                                    </div>
+                                    <input type="hidden" name="item_id" value="{{ i[0] }}">
+                                    <input type="hidden" name="item_price" value="{{ i[3] }}">
+                                    <button type="submit" class="btn btn-warning">Buy Now</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End of Buy Modal -->
                 {% endfor %}
         </div>
     </section>
+    <script src="/static/js/shop.js"></script>
     {% include 'footer.html' %}
 {% endblock %}

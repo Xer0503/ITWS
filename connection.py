@@ -1,6 +1,7 @@
 import sqlite3
 db_prod = 'products.db'
 db_acc = 'account.db'
+db_order = 'order.db'
 
 def connection_prod():
     con = sqlite3.connect(db_prod)
@@ -8,4 +9,8 @@ def connection_prod():
 
 def connection_acc():
     con = sqlite3.connect(db_acc)
+    return con
+
+def connection_order():
+    con = sqlite3.connect(db_order)
     return con

@@ -1,16 +1,16 @@
-from connection import connection_prod, connection_acc
+from connection import connection_prod, connection_acc, connection_order
 def create():
-    con = connection_acc()
+    con = connection_order()
     c = con.cursor()
     c.execute(
         """
-    CREATE TABLE admin (
-    admin_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    email unique,
-    password VARCHAR(100),
-    role VARCHAR(5)
+    CREATE TABLE IF NOT EXISTS order_details (
+    order_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    customer_id INTEGER,
+    item_id INTEGER,
+    order_quantity INTEGER,
+    order_price REAL,
+    order_date DATETIME DEFAULT CURRENT_TIMESTAMP
     )
     """        
     )
@@ -123,3 +123,4 @@ def addAdmin():
     con.commit()
     con.close()
     
+create()
