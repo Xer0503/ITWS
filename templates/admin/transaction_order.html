@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Admin - Dashboard</title>
+    <title> {% block title %} Admin | Developers {% endblock %} </title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -69,7 +69,7 @@
                         <h6 class="collapse-header">Components:</h6>
                         <a class="collapse-item" href="{{ url_for('customer_table') }}">Customer</a>
                         <a class="collapse-item" href="{{ url_for('products_table') }}">Products</a>
-                        <a class="collapse-item" href="{{ url_for('view_transaction') }}">Orders</a>
+                        <a class="collapse-item" href="#">Orders</a>
                         <div class="collapse-divider"></div>
                         <a class="collapse-item" href="{{ url_for('feedback_table') }}">Feedbacks</a>
                     </div>
@@ -167,108 +167,87 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
-                    </div>
-
-                    <!-- Content Row -->
-                    <div class="row">
-
-                        <!-- Total Customer -->
-                        <div class="col-xl-6 col-md-6 mb-4">
-                            <a href="{{url_for('customer_table')}}" class="text-decoration-none">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-lg font-weight-bold text-primary text-uppercase mb-1">
-                                                Total Of Customers</div>
-                                            <div class="h3 mb-0 font-weight-bold text-gray-800 text-center"> 
-                                                {{ total_customers|length }}
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            </a>
+                    <!-- Transaction Order -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Customer Data</h6>
                         </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <thead class="text-center">
+                                            <th>Recipient no</th>
+                                            <th>Transaction Date</th>
+                                            <th>Action</th>
+                                        </thead>
+                                    </thead>
+                                    <tbody>
+                                        {% for i in transaction %}
+                                        <tr>
+                                            <td>{{i[0]}}</td><!--id no-->
+                                            <td>{{i[5]}}</td><!--date-->
+                                            <td>
+                                                <div class="d-flex align-items-center justify-content-evenly">
+                                                    <button type="button" class="btn btn-warning btn-sm px-3"
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#view{{i[0]}}"
+                                                    >View</button>
+                                                    <form action="{{url_for('delete_transaction')}}" method="post">
+                                                        <input type="hidden" name="transaction_id" value="{{i[0]}}">
+                                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <!-- View Modal -->
+                                        <div class="modal" id="view{{i[0]}}" tabindex="-1">
+                                            <div class="modal-dialog">
+                                              <div class="modal-content">
+                                                <div class="modal-header">
+                                                  <h5 class="modal-title">Information</h5>
+                                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <content class="p-3">
+                                                      <div class="f-flex flex-column align-items-center justify-content-center">
+                                                          <h5 class="text-center">Account Info</h5>
+                                                          <form action="{{url_for('view_transaction_customer')}}" method="post">
+                                                            <input type="hidden" name="customer_id" value="{{i[1]}}">
+                                                            <input type="hidden" name="item_id" value="{{i[2]}}">
+                                                            <button type="submit" class="btn btn-warning btn-sm">View</button>
+                                                          </form>
+                                                          
+                                                            <h5 class="text-center">Transaction Info</h5>
+                                                            {% for c_info in customer_details %}
+                                                                <p class="card-text">Name: {{ c_info[1] }} {{ c_info[2] }}</p>
+                                                                <p class="card-text">Address: {{ c_info[3] }}</p>
+                                                                <p class="card-text">Phone: {{ c_info[4] }}</p>
+                                                                <p class="card-text">Email: {{ c_info[5] }}</p>
+                                                                {% for i_info in item_details %}
+                                                                    <p class="card-text">Item Name: {{ i_info[1] }}</p>
+                                                                    <p class="card-text">Item Price: ₱{{ i_info[2] }}</p>
+                                                                    <p class="card-text">Item Quantity: {{ i[3] }}</p>
+                                                                    <p class="card-text">Total Price: ₱{{ i[4] }}</p>
+                                                                    <p class="card-text">Transaction Date: {{ i[5] }}</p>
+                                                                    <p class="card-text">Category: {{ i_info[] }}</p>
+                                                                {% endfor %}
+                                                            {% endfor %}
+                                                          
 
-                        <!-- Total Active Account -->
-                        <div class="col-xl-6 col-md-6 mb-4">
-                            <a href="{{url_for('customer_table')}}" class="text-decoration-none">
-                            <div class="card border-left-success shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-lg font-weight-bold text-success text-uppercase mb-1">
-                                                Total Actives</div>
-                                            <div class="h3 text-center mb-0 font-weight-bold text-gray-800">
-                                                {{ total_active_customers|length }}
+                                                      </div>  
+                                                    </content>
+                                                </div>
+                                              </div>
                                             </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
+                                          </div>
+                                         <!-- End of View modal -->
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
-                            </a>
-                        </div>
-
-                        <!-- Total Products -->
-                        
-                        <div class="col-xl-6 col-md-6 mb-4">
-                            <a href="{{url_for('products_table')}}" class="text-decoration-none">
-                            <div class="card border-left-danger shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-lg font-weight-bold text-danger text-uppercase mb-1">
-                                                Total Products</div>
-                                            <div class="h3 text-center mb-0 font-weight-bold text-gray-800">
-                                                {{ total_items|length }}
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            </a>
-                        </div>
-                        <!-- Total Feedback -->
-                        <div class="col-xl-6 col-md-6 mb-4">
-                            <a href="{{url_for('feedback_table')}}" class="text-decoration-none">
-                            <div class="card border-left-warning shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-lg font-weight-bold text-warning text-uppercase mb-1">
-                                                Total Feedback</div>
-                                            <div class="h3 text-center mb-0 font-weight-bold text-gray-800"> {{ total_feedback|length }} </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            </a>    
                         </div>
                     </div>
-
-                    <!-- Content Row -->
-
-                    <div class="row">
-                    </div>
-
                 </div>
                 <!-- /.container-fluid -->
 

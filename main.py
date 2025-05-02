@@ -3,6 +3,7 @@ from connection import connection_prod, connection_acc, connection_order, connec
 from db import query_items, query_feedback
 from customer_query import customer_query, active_customer
 from products_query import query_items, query_feedback
+from query_order import query_order
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
@@ -234,6 +235,8 @@ def delete_feedback_sql(feedback_id):
     con.commit()
     con.close()
 
+#for authentication code
+
 @app.route('/login')
 def login():
     return render_template('login.html')
@@ -339,7 +342,6 @@ def logout():
     user_id = session.get('user_id')
     role = session.get('role')
 
-    # Mark user as inactive in the DB
     if role == 'user':
         cursor.execute("UPDATE customer SET is_active = 0 WHERE customer_id = ?", (user_id,))
     
@@ -347,6 +349,9 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
+# end of authentication code
+
+# for order and cart code
 @app.route('/buy_items/cart', methods=['POST'])
 def buy_items_fr_cart():
     cart_id = request.form['cart_id']
@@ -356,20 +361,22 @@ def buy_items_fr_cart():
         c = con.cursor()
         sql = 'SELECT * FROM cart WHERE cart_id=?'
         c.execute(sql, (cart_id,))
-        cart = c.fetchall()
+        cart = c.fetchone()
         con.commit()
         con.close()
 
         if cart:
-            customer_id = cart[0][1]
-            item_id = cart[0][2]
-            item_name = cart[0][3]
-            quantity = cart[0][4]
-            item_price = cart[0][5]
-            item_category = cart[0][6]
+            print('cart: ', cart)
+
+            customer_id = cart[1]
+            item_id = cart[2]
+            item_name = cart[3]
+            quantity = cart[4]
+            item_price = cart[5]
+            item_category = cart[6]
             total_price = float(item_price) * float(quantity)
             add_order(customer_id, item_id, quantity, total_price, item_name, item_category)
-            delete_cart_sql(cart_id)  # Delete from cart after adding to order
+            delete_cart_sql(cart_id)  # Delete naman after buying
 
             return redirect(url_for('view_cart'))
         
@@ -498,6 +505,67 @@ def view_cart_customer():
     con.close()
     
     return cart
+# end of order and cart code
+
+# for admin view transaction record code
+@app.route('/admin/view_transaction')
+def view_transaction():
+    transaction = query_order()
+    return render_template('/admin/transaction_order.html', transaction=transaction)
+
+@app.route('/admin/delete_transaction', methods=['POST', 'GET'])
+def delete_transaction():
+    if request.method == 'POST':
+        transaction_id = request.form['transaction_id']
+        delete_transaction_sql(transaction_id)
+        return redirect(url_for('view_transaction'))
+    
+def delete_transaction_sql(transaction_id):
+    con = connection_order()
+    c = con.cursor()
+
+    sql = 'DELETE FROM order_details WHERE order_id=?'
+    c.execute(sql, (transaction_id,))
+
+    con.commit()
+    con.close()
+
+@app.route('/admin/view/', methods=['POST', 'GET'])
+def view_transaction_customer():
+    if request.method == 'POST':
+        customer_id = request.form['customer_id']
+        item_id = request.form['item_id']
+
+        customer_details = query_customer_info(customer_id)
+        item_details = query_items_info(item_id)
+
+        return render_template('/admin/transaction_order.html', customer_details=customer_details, item_details=item_details)
+
+
+def query_customer_info(customer_id):
+    con = connection_order()
+    c = con.cursor()
+
+    sql = 'SELECT * FROM order_details WHERE customer_id=?'
+    c.execute(sql, (customer_id,))
+    customer_details = c.fetchone()
+    con.commit()
+    con.close()
+
+    return customer_details
+
+def query_items_info(item_id):
+    con = connection_order()
+    c = con.cursor()
+
+    sql = 'SELECT * FROM order_details WHERE item_id=?'
+    c.execute(sql, (item_id,))
+    item_details = c.fetchone()
+    con.commit()
+    con.close()
+
+    return item_details
+# end view transaction record code
 
 if __name__ == '__main__':
     app.run(debug=True)
