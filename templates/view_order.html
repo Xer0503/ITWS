@@ -14,16 +14,25 @@
                     {% for i in orders %}
                         <div class="col-12 col-lg-3 col-md-4">
                             <div class="card rounded shadow-sm">
+                                <div class="d-flex justify-content-center">
+                                    <img src="/static/images/{{ i[7] }}.png" class="card-img-top w-50" alt="{{ i[1] }}">
+                                </div>
                                 <div class="card-body">
+                                    <h5 class="card-title">
+                                        {{ i[6] }}
+                                    </h5>
                                     <p class="card-text">
                                         Quantity: {{ i[3] }}
                                     </p>
                                     <p class="card-text">
-                                        Price that you need to prepared: <span class="fw-bold">₱{{ i[4] }}</span>
+                                        Price: <span class="fw-bold">₱{{ i[4] }}</span>
                                     </p>
-                                    <p class="card-text">
-                                        <i class="bi bi-box-seam"></i> date: {{ i[5] }}
-                                    </p>
+                                    <form action="{{url_for('cancel_order')}}" method="post">
+                                        <input type="hidden" name="order_id" value="{{ i[0] }}">
+                                        <button type="submit" class="btn btn-danger form-control">
+                                            Cancel
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>

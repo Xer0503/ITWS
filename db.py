@@ -101,11 +101,11 @@ def query_customer():
         print('fetch customer: ', i)
 
 def addColumn():
-    con = connection_prod()
+    con = connection_order()
     c = con.cursor()
 
     c.execute("""
-        ALTER TABLE items ADD COLUMN timestamp DATETIME
+        ALTER TABLE order_details ADD COLUMN order_category TEXT
     """)
     con.commit()
     con.close()
@@ -122,6 +122,3 @@ def addAdmin():
         """)
     con.commit()
     con.close()
-
-    
-create()

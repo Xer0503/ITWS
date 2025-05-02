@@ -14,3 +14,7 @@ def connection_acc():
 def connection_order():
     con = sqlite3.connect(db_order)
     return con
+
+def connection_cart():
+    con = sqlite3.connect(db_order)
+    return con

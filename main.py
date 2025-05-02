@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, url_for, redirect, session
-from connection import connection_prod, connection_acc, connection_order
+from connection import connection_prod, connection_acc, connection_order, connection_cart
 from db import query_items, query_feedback
 from customer_query import customer_query, active_customer
 from products_query import query_items, query_feedback
@@ -347,23 +347,55 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
+@app.route('/buy_items/cart', methods=['POST'])
+def buy_items_fr_cart():
+    cart_id = request.form['cart_id']
+
+    if cart_id:
+        con = connection_cart()
+        c = con.cursor()
+        sql = 'SELECT * FROM cart WHERE cart_id=?'
+        c.execute(sql, (cart_id,))
+        cart = c.fetchall()
+        con.commit()
+        con.close()
+
+        if cart:
+            customer_id = cart[0][1]
+            item_id = cart[0][2]
+            item_name = cart[0][3]
+            quantity = cart[0][4]
+            item_price = cart[0][5]
+            item_category = cart[0][6]
+            total_price = float(item_price) * float(quantity)
+            add_order(customer_id, item_id, quantity, total_price, item_name, item_category)
+            delete_cart_sql(cart_id)  # Delete from cart after adding to order
+
+            return redirect(url_for('view_cart'))
+        
+    return redirect(url_for('view_cart'))
+
 @app.route('/buy_items', methods=['POST'])
 def buy_items():
+    #in buy section
     customer_id = session['user_id']
     item_id = request.form['item_id']
+    item_name = request.form['item_name']
+    item_category = request.form['item_category']
     item_price = request.form['item_price']
     quantity = request.form['quantity']
     total_price = float(item_price) * float(quantity)
-    add_order(customer_id, item_id, quantity, total_price)
+    add_order(customer_id, item_id, quantity, total_price, item_name, item_category)
 
     return redirect(url_for('shop'))
+    
 
-def add_order(customer_id, item_id, quantity, total_price):
+def add_order(customer_id, item_id, quantity, total_price, item_name, item_category):
     con = connection_order()
     c = con.cursor()
 
-    sql = 'INSERT INTO order_details (customer_id, item_id, order_quantity, order_price) VALUES (?, ?, ?, ?)'
-    c.execute(sql, (customer_id, item_id, quantity, total_price))
+    sql = 'INSERT INTO order_details (customer_id, item_id, order_quantity, order_price, order_item, order_category) VALUES (?, ?, ?, ?, ?, ?)'
+    c.execute(sql, (customer_id, item_id, quantity, total_price, item_name, item_category))
 
     con.commit()
     con.close()
@@ -376,30 +408,96 @@ def view_order():
     return render_template('view_order.html', orders=orders)
 
 def view_order_customer():
+    if 'user_id' not in session:
+        return []
+
     con = connection_order()
     c = con.cursor()
 
     sql = 'SELECT * FROM order_details WHERE customer_id=?'
     c.execute(sql, (session['user_id'],))
     orders = c.fetchall()
-    con.commit()
     con.close()
 
     return orders
 
-def fetch_item_details():
-    item_detail = view_order_customer()
-    item_id = item_detail
-    con = connection_prod()
+@app.route('/delete_order', methods=['POST', 'GET'])
+def cancel_order():
+    if request.method == 'POST':
+        order_id = request.form['order_id']
+        delete_order_sql(order_id)
+        return redirect(url_for('view_order'))
+
+@app.route('/delete_cart', methods=['POST', 'GET'])
+def cancel_cart():
+    if request.method == 'POST':
+        cart_id = request.form['cart_id']
+        delete_cart_sql(cart_id)
+        return redirect(url_for('view_cart'))
+
+def delete_order_sql(order_id):
+    con = connection_order()
     c = con.cursor()
 
-    sql = 'SELECT * FROM items'
-    c.execute(sql)
-    items = c.fetchall()
+    sql = 'DELETE FROM order_details WHERE order_id=?'
+    c.execute(sql, (order_id,))
+
     con.commit()
     con.close()
 
-    return items
+def delete_cart_sql(cart_id):
+    con = connection_order()
+    c = con.cursor()
+
+    sql = 'DELETE FROM cart WHERE cart_id=?'
+    c.execute(sql, (cart_id,))
+
+    con.commit()
+    con.close()
+
+@app.route('/cart_items', methods=['POST'])
+def cart_items():
+    customer_id = session['user_id']
+    item_id = request.form['item_id']
+    item_name = request.form['item_name']
+    item_category = request.form['item_category']
+    item_price = request.form['item_price']
+    quantity = request.form['quantity']
+    total_price = float(item_price) * float(quantity)
+    cart_order(customer_id, item_id, quantity, total_price, item_name, item_category)
+
+    return redirect(url_for('shop'))
+
+def cart_order(customer_id, item_id, quantity, total_price, item_name, item_category):
+    con = connection_order()
+    c = con.cursor()
+
+    sql = 'INSERT INTO cart (customer_id, product_id, item_name, item_quantity, item_price, item_category) VALUES (?, ?, ?, ?, ?, ?)'
+    c.execute(sql, (customer_id, item_id, item_name, quantity, total_price, item_category))
+
+    con.commit()
+    con.close()
+
+    return redirect(url_for('shop'))
+
+@app.route('/view/cart')
+def view_cart():
+    cart = view_cart_customer()
+    return render_template('view_cart.html', cart=cart)
+
+def view_cart_customer():
+    if 'user_id' not in session:
+        return []
+
+    con = connection_order()
+    c = con.cursor()
+
+    sql = 'SELECT * FROM cart WHERE customer_id=?'
+    c.execute(sql, (session['user_id'],))
+    cart = c.fetchall()
+    con.close()
+    
+    return cart
 
 if __name__ == '__main__':
     app.run(debug=True)

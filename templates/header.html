@@ -80,11 +80,18 @@
             <span>
               <i class="bi bi-telephone-fill"></i> {{ session['phone'] }}
             </span>
-            <a class="btn btn-warning btn-sm my-2"
-              href="{{url_for('view_order')}}"
-              type="button">
-              <i class="bi bi-cart-check-fill"></i> View Orders
-            </a>
+            <div class="d-flex-justify-content-center">
+              <a class="btn btn-warning btn-sm my-2"
+                href="{{url_for('view_order')}}"
+                type="button">
+                <i class="bi bi-cart-check-fill"></i> View Orders
+              </a>
+              <a class="btn btn-warning btn-sm my-2"
+                href="{{url_for('view_cart')}}"
+                type="button">
+                <i class="bi bi-cart-check-fill"></i> View Cart
+              </a>
+            </div>
           </div>
         </div>
       </div>
