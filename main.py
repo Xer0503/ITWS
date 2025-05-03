@@ -26,10 +26,12 @@ def shop():
 def aboutUs():
     return render_template('developer_user_side.html')
 
+#Admin Section
 @app.route('/admin/devs')
 def developer():
     return render_template('/admin/developers.html')
 
+#admin rendering data sa dashboard
 @app.route('/admin')
 def admin():
     total_customers = customer_query()
@@ -45,8 +47,9 @@ def admin():
                                )
     else:
         return redirect(url_for('home'))
+#end dashboard
 
-
+#admin managing customer accounts
 @app.route('/admin/customer_table')
 def customer_table():
     customer = customer_query()
@@ -236,7 +239,6 @@ def delete_feedback_sql(feedback_id):
     con.close()
 
 #for authentication code
-
 @app.route('/login')
 def login():
     return render_template('login.html')
@@ -244,64 +246,46 @@ def login():
 @app.route('/login', methods=['POST'])
 def login_validation():
     con = connection_acc()
-    cursor = con.cursor()
+    c = con.cursor()
     email = request.form['email']
     password = request.form['password']
 
-    try:
-        cursor.execute("SELECT * FROM customer WHERE email = ? AND password = ?", (email, password))
-        user = cursor.fetchone()
+    if email and password:
+        c.execute("SELECT * FROM customer WHERE email = ? AND password = ?", (email, password))
+        user = c.fetchone()
+        role = 'user'
 
         if not user:
-            cursor.execute("SELECT * FROM admin WHERE email = ? AND password = ?", (email, password))
-            user = cursor.fetchone()
-            session['first_name'] = user[1]
-            session['last_name'] = user[2]
-            session['email'] = user[3]  
+            c.execute("SELECT * FROM admin WHERE email = ? AND password = ?", (email, password))
+            user = c.fetchone()
+            role = 'admin' if user else None
 
         if user:
             session['user_id'] = user[0]
             session['first_name'] = user[1]
             session['last_name'] = user[2]
-            session['phone'] = user[3]
-            session['address'] = user[4]
             session['email'] = user[5]
 
+            if role == 'user':
+                session['phone'] = user[3]
+                session['address'] = user[4]
+                session['role'] = user[7] if len(user) > 7 else 'user'
+                c.execute("UPDATE customer SET is_active = 1 WHERE customer_id = ?", (user[0],))
+                con.commit()
+                con.close()
 
-            user_id = session.get('user_id')
-            cursor.execute("UPDATE customer SET is_active = 1 WHERE customer_id = ?", (user_id,))
-            con.commit()
-            con.close()
-
-            if len(user) > 7: 
-                session['role'] = user[7] 
-            else:
-                session['role'] = user[5]
-
-            # Redirect based on role
-            if session['role'] == 'admin':
-                return redirect(url_for('admin'))
-            else:
                 return redirect(url_for('shop'))
 
+            elif role == 'admin':
+                session['role'] = 'admin'
+                con.close()
+                return redirect(url_for('admin'))
+
         else:
+            con.close()
             return render_template('login.html', wrong='Invalid email or password')
-        
-    except Exception as e:
-        print("Error during login:", e)
-        return render_template('login.html', wrong='Invalid email or password')
-
-def validate(acc_validate):    
-    con = connection_acc()
-    c = con.cursor()
-    sql = 'SELECT * FROM customer WHERE email=? AND password=?'
-    c.execute(sql, acc_validate)
-    
-    verify = c.fetchall()
-    con.commit()
-    con.close()
-
-    return verify
+    else:
+        return render_template('login.html', wrong='Please enter both email and password')
 
 @app.route('/signup')
 def signup():
@@ -348,7 +332,6 @@ def logout():
     con.commit()
     session.clear()
     return redirect(url_for('login'))
-
 # end of authentication code
 
 # for order and cart code
@@ -367,7 +350,6 @@ def buy_items_fr_cart():
 
         if cart:
             print('cart: ', cart)
-
             customer_id = cart[1]
             item_id = cart[2]
             item_name = cart[3]

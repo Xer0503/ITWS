@@ -1,4 +1,4 @@
-from connection import connection_prod, connection_acc, connection_order, connection_transaction
+from connection import connection_prod, connection_acc, connection_order
 def create():
     con = connection_order()
     c = con.cursor()
@@ -100,15 +100,7 @@ def query_customer():
     for i in customer:
         print('fetch customer: ', i)
 
-def addColumn():
-    con = connection_transaction()
-    c = con.cursor()
 
-    c.execute("""
-        ALTER TABLE transaction_records ADD COLUMN transaction_date DATETIME
-    """)
-    con.commit()
-    con.close()
 
 def addAdmin():
     con = connection_acc()
