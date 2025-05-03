@@ -530,35 +530,36 @@ def delete_transaction_sql(transaction_id):
     con.commit()
     con.close()
 
-@app.route('/admin/view/', methods=['POST', 'GET'])
-def view_transaction_customer():
-    if request.method == 'POST':
-        customer_id = request.form['customer_id']
-        item_id = request.form['item_id']
+@app.route('/admin/view/<int:customer_id>/p_id/<int:product_id>')
+def view_transaction_customer(customer_id, product_id):
+    if request.method == 'GET':
 
         customer_details = query_customer_info(customer_id)
-        item_details = query_items_info(item_id)
+        item_details = query_items_info(product_id)
 
         return render_template('/admin/transaction_order.html', customer_details=customer_details, item_details=item_details)
 
 
 def query_customer_info(customer_id):
-    con = connection_order()
+    con = connection_acc()
     c = con.cursor()
 
-    sql = 'SELECT * FROM order_details WHERE customer_id=?'
+    sql = 'SELECT * FROM customer WHERE customer_id=?'
     c.execute(sql, (customer_id,))
     customer_details = c.fetchone()
     con.commit()
     con.close()
 
+    for i in customer_details:
+        print('fetch customer: ', i)
+
     return customer_details
 
 def query_items_info(item_id):
-    con = connection_order()
+    con = connection_prod()
     c = con.cursor()
 
-    sql = 'SELECT * FROM order_details WHERE item_id=?'
+    sql = 'SELECT * FROM items WHERE item_id=?'
     c.execute(sql, (item_id,))
     item_details = c.fetchone()
     con.commit()

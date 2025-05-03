@@ -69,7 +69,7 @@
                         <h6 class="collapse-header">Components:</h6>
                         <a class="collapse-item" href="{{ url_for('customer_table') }}">Customer</a>
                         <a class="collapse-item" href="{{ url_for('products_table') }}">Products</a>
-                        <a class="collapse-item" href="#">Orders</a>
+                        <a class="collapse-item" href="{{ url_for('view_transaction') }}">Orders</a>
                         <div class="collapse-divider"></div>
                         <a class="collapse-item" href="{{ url_for('feedback_table') }}">Feedbacks</a>
                     </div>
@@ -178,21 +178,25 @@
                                     <thead>
                                         <thead class="text-center">
                                             <th>Recipient no</th>
+                                            <th>Customer ID</th>
+                                            <th>Item ID</th>
+                                            <th>Quantity</th>
+                                            <th>Total Price</th>
                                             <th>Transaction Date</th>
                                             <th>Action</th>
                                         </thead>
                                     </thead>
-                                    <tbody>
+                                    <tbody class="text-center">
                                         {% for i in transaction %}
                                         <tr>
-                                            <td>{{i[0]}}</td><!--id no-->
+                                            <td>{{i[0]}}</td>
+                                            <td>{{i[1]}}</td>
+                                            <td>{{i[2]}}</td>
+                                            <td>{{i[3]}}</td>
+                                            <td>{{i[4]}}</td>
                                             <td>{{i[5]}}</td><!--date-->
                                             <td>
                                                 <div class="d-flex align-items-center justify-content-evenly">
-                                                    <button type="button" class="btn btn-warning btn-sm px-3"
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#view{{i[0]}}"
-                                                    >View</button>
                                                     <form action="{{url_for('delete_transaction')}}" method="post">
                                                         <input type="hidden" name="transaction_id" value="{{i[0]}}">
                                                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
@@ -212,29 +216,34 @@
                                                     <content class="p-3">
                                                       <div class="f-flex flex-column align-items-center justify-content-center">
                                                           <h5 class="text-center">Account Info</h5>
-                                                          <form action="{{url_for('view_transaction_customer')}}" method="post">
-                                                            <input type="hidden" name="customer_id" value="{{i[1]}}">
-                                                            <input type="hidden" name="item_id" value="{{i[2]}}">
-                                                            <button type="submit" class="btn btn-warning btn-sm">View</button>
-                                                          </form>
-                                                          
-                                                            <h5 class="text-center">Transaction Info</h5>
-                                                            {% for c_info in customer_details %}
-                                                                <p class="card-text">Name: {{ c_info[1] }} {{ c_info[2] }}</p>
-                                                                <p class="card-text">Address: {{ c_info[3] }}</p>
-                                                                <p class="card-text">Phone: {{ c_info[4] }}</p>
-                                                                <p class="card-text">Email: {{ c_info[5] }}</p>
-                                                                {% for i_info in item_details %}
-                                                                    <p class="card-text">Item Name: {{ i_info[1] }}</p>
-                                                                    <p class="card-text">Item Price: ₱{{ i_info[2] }}</p>
-                                                                    <p class="card-text">Item Quantity: {{ i[3] }}</p>
-                                                                    <p class="card-text">Total Price: ₱{{ i[4] }}</p>
-                                                                    <p class="card-text">Transaction Date: {{ i[5] }}</p>
-                                                                    <p class="card-text">Category: {{ i_info[] }}</p>
-                                                                {% endfor %}
-                                                            {% endfor %}
-                                                          
-
+                                                          {% if customer_details %}
+                                                          <div class="row g-3">
+                                                            <div class="col">
+                                                                {{ customer_details[1] }} {{ customer_details[2] }} <!-- first name, last name -->
+                                                            </div>
+                                                            <div class="col">
+                                                                {{ customer_details[3] }}<!-- Cp numberr -->
+                                                            </div>
+                                                            <div class="col">
+                                                                {{ customer_details[4] }}<!-- Address -->
+                                                            </div>
+                                                          </div>
+                                                          <h5 class="text-center">Product Info</h5>
+                                                          <div class="row g-3">
+                                                            <div class="col">
+                                                                Item name: {{ item_details[1] }} <!-- first name, last name -->
+                                                            </div>
+                                                            <div class="col">
+                                                                Item Category: {{ item_details[5] }}<!-- Cp numberr -->
+                                                            </div>
+                                                            <div class="col">
+                                                                Item Quantity: {{ i[3] }}
+                                                            </div>
+                                                            <div class="col">
+                                                                Total Price: {{ i[4] }}
+                                                            </div>
+                                                          </div>
+                                                          {% endif %}
                                                       </div>  
                                                     </content>
                                                 </div>
