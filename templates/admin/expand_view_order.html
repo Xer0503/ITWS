@@ -16,6 +16,7 @@
 
     <!-- Custom styles for this template-->
     <link href="/static/css/sb-admin-2.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
@@ -69,7 +70,7 @@
                         <h6 class="collapse-header">Components:</h6>
                         <a class="collapse-item" href="{{ url_for('customer_table') }}">Customer</a>
                         <a class="collapse-item" href="{{ url_for('products_table') }}">Products</a>
-                        <a class="collapse-item" href="#">Orders</a>
+                        <a class="collapse-item" href="{{ url_for('view_transaction') }}">Orders</a>
                         <div class="collapse-divider"></div>
                         <a class="collapse-item" href="{{ url_for('feedback_table') }}">Feedbacks</a>
                     </div>
@@ -166,66 +167,54 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-
-                    <!-- Transaction Order -->
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Order Data</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
-                                    <thead>
-                                        <thead class="text-center">
-                                            <th>Recipient no</th>
-                                            <th>Transaction Date</th>
-                                            <th>Action</th>
-                                        </thead>
-                                    </thead>
-                                    <tbody>
-                                        {% for i in transaction %}
-                                        <tr>
-                                            <td>{{i[0]}}</td><!--id no-->
-                                            <td>{{i[5]}}</td><!--date-->
-                                            <td>
-                                                <div class="d-flex align-items-center justify-content-evenly">
-                                                    <a 
-                                                        type="button" 
-                                                        class="btn btn-warning btn-sm px-3"
-                                                        data-bs-toggle="modal" 
-                                                        data-bs-target="#view{{i[0]}}"
-                                                        href="{{ url_for('view_transaction_customer', customer_id=i[1], product_id=i[2]) }}"
-                                                        >
-                                                        View
-                                                        </a>
-                                                    <form action="{{url_for('delete_transaction')}}" method="post">
-                                                        <input type="hidden" name="transaction_id" value="{{i[0]}}">
-                                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                                    </form>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <!-- View Modal -->
-                                        <div class="modal" id="view{{i[0]}}" tabindex="-1">
-                                            <div class="modal-dialog">
-                                              <div class="modal-content">
-                                                <div class="modal-header">
-                                                  <h5 class="modal-title">Information</h5>
-                                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    
-                                                </div>
-                                              </div>
+                    <section class="p-3">
+                        {% if customer_details and item_details %}
+                        <h3 class="text-center fw-bold">Order Overview</h3>
+                        <div class="row g-3 justify-content-center my-3">
+                            <div class="col-12 col-lg-5">
+                                <div class="card p-3 h-100">
+                                    <h5 class="text-center fw-bold text-dark">Customer Information</h5>
+                                    <div class="d-flex justify-content-center">
+                                        <img src="/static/images/img/undraw_profile_2.svg" class="w-25" alt="{{ customer_details[1] }}">
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-flex flex-column">
+                                            <div class="d-flex justify-content-center align-items-center">
+                                                <span class="fw-bold"><i class="bi bi-patch-check-fill text-primary"></i> {{customer_details[1]}} {{customer_details[2]}} </span>
                                             </div>
-                                          </div>
-                                         <!-- End of View modal -->
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
+                                            <span class=""><i class="bi bi-envelope-at-fill"></i> {{customer_details[5]}}</span>
+                                            <span class=""><i class="bi bi-telephone-fill"></i> +63 {{customer_details[3]}}</span>
+                                            <span class=""> <i class="bi bi-house-check-fill"></i> {{customer_details[4]}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-5">
+                                <div class="card p-3 h-100">
+                                    <h5 class="text-center fw-bold text-dark">Items Information</h5>
+                                    <div class="d-flex justify-content-center">
+                                        <img src="/static/images/{{item_details[5]}}.png" class="w-25" alt="{{ item_details[1] }}">
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-flex flex-column">
+                                            <div class="d-flex justify-content-center align-items-center mb-3">
+                                                <span class="fw-bold text-dark">{{item_details[1]}}</span>
+                                            </div>
+                                            <span class="fw-bold">Price: ₱{{item_details[3]}}</span> 
+                                            <span class="fw-bold">Stock: <i class="bi bi-box-seam-fill"></i> {{item_details[4]}}</span>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                        {% endif %}
+
+                        <div class="text-center">
+                            <a href="{{url_for('view_transaction')}}" type="button" class="btn btn-primary"> Back <i class="bi bi-arrow-counterclockwise"></i> </a>
+                        </div>
+                        
+                    </section>
                 </div>
                 <!-- /.container-fluid -->
 

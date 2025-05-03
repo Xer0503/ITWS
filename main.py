@@ -44,7 +44,7 @@ def admin():
                                total_feedback = total_feedback
                                )
     else:
-        return redirect(url_for('home'))  # or 403 error if preferred
+        return redirect(url_for('home'))
 
 
 @app.route('/admin/customer_table')
@@ -530,14 +530,15 @@ def delete_transaction_sql(transaction_id):
     con.commit()
     con.close()
 
-@app.route('/admin/view/<int:customer_id>/p_id/<int:product_id>')
-def view_transaction_customer(customer_id, product_id):
-    if request.method == 'GET':
-
+@app.route('/admin/view_expand', methods = ['POST'])
+def expand_view_order():
+    if request.method == 'POST':
+        customer_id = request.form['customer_id']
+        product_id = request.form['item_id']
         customer_details = query_customer_info(customer_id)
         item_details = query_items_info(product_id)
 
-        return render_template('/admin/transaction_order.html', customer_details=customer_details, item_details=item_details)
+        return render_template('/admin/expand_view_order.html', customer_details=customer_details, item_details=item_details)
 
 
 def query_customer_info(customer_id):
@@ -564,6 +565,9 @@ def query_items_info(item_id):
     item_details = c.fetchone()
     con.commit()
     con.close()
+
+    for i in item_details:
+        print('fetch item: ', i)
 
     return item_details
 # end view transaction record code
