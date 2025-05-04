@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for, redirect, session
+from flask import Flask, render_template, request, url_for, redirect, session, Response
 from connection import connection_prod, connection_acc, connection_order, connection_cart
 from db import query_items, query_feedback
 from customer_query import customer_query, active_customer
@@ -7,6 +7,7 @@ from query_order import query_order
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 @app.route('/')
 @app.route('/home')
@@ -149,12 +150,15 @@ def manage_products():
 @app.route('/admin/add_products', methods = ['POST'])
 def add_products():
     if request.method == 'POST':
+        file = request.files.get('file_img')
+        image = file.read()
         itemsInput = (
             request.form['name'],
             request.form['description'],
             request.form['price'],
             request.form['stocks'],
-            request.form['category']
+            request.form['category'],
+            image
         )
         sql_addItem(itemsInput)
         return redirect(url_for('products_table'))
@@ -166,7 +170,7 @@ def sql_addItem(itemsInput):
     con = connection_prod()
     c = con.cursor()
 
-    sql = 'INSERT INTO items (item_name, item_description, item_price, item_stock, item_category) VALUES (?,?,?,?,?)'
+    sql = 'INSERT INTO items (item_name, item_description, item_price, item_stock, item_category, item_image) VALUES (?,?,?,?,?,?)'
 
     c.execute(sql, itemsInput)
     con.commit()
@@ -192,6 +196,19 @@ def update_product_sql(product_edit_info):
 
     con.commit()
     con.close()
+
+@app.route('/image/<int:item_id>')
+def get_image(item_id):
+    con = connection_prod()
+    c = con.cursor()
+    c.execute("SELECT item_image FROM items WHERE item_id = ?", (item_id,))
+    row = c.fetchone()
+    con.close()
+
+    if row and row[0]:
+        return Response(row[0], mimetype="image/jpeg")  # or detect type if needed
+    return '', 404
+
 
 @app.route('/feedback', methods = ['POST'])
 def feedback():

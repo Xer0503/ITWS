@@ -185,7 +185,7 @@
                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                  </div>
                                  <div class="modal-body">
-                                   <form action="/admin/add_products" method="post">
+                                   <form action="/admin/add_products" method="post" enctype="multipart/form-data">
                                      <div class="mb-3">
                                          <label class="form-label">
                                              Name:
@@ -223,6 +223,12 @@
                                              <option value="smartwatch">Smart Watch</option>
                                            </select>
                                      </div>
+                                     <div class="mb-3">
+                                        <label class="form-label">
+                                            Thumbnail Image:
+                                        </label>
+                                        <input type="file" name="file_img" class="form-control" required>
+                                    </div>
                                      <div class="mb-3 text-center">
                                          <button type="submit" class="btn btn-warning">
                                              Upload
