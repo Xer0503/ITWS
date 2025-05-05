@@ -3,102 +3,97 @@
 {% block content %}
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <div class="container">
-      <a class="navbar-brand text-warning fw-bold text-center" href="{{url_for('home')}}">BUZZER<span class="text-dark fw-bold">Beater</span></a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 text-center">
-          <div class="d-flex align-items-center justify-content-center flex-column flex-lg-row">
-            <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="{{url_for('home')}}">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{url_for('shop')}}">Shop</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              About Us
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="{{url_for('aboutUs')}}">Developers</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#contacts">Contacts</a></li>
-              <li><a class="dropdown-item" href="#feedback">Feedback</a></li>
-              <li><a class="dropdown-item" href="#location">Location</a></li>
-            </ul>
-          </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle d-flex align-items-center justify-content-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                {% if session['first_name'] %}
-                <div class="d-flex align-items-center">
-                <span class="me-2">{{ session['first_name'] }}</span>
-                <img src="/static/images/img/undraw_profile_2.svg" class="profile-img rounded-circle" alt="{{ session['first_name'] }}">
-                </div>
-                {% else %}
-                <i class="bi bi-person-circle"></i>
-                {% endif %}
-              </a>
-              <ul class="dropdown-menu">
-                {% if session['first_name'] %}
-                <li><a class="dropdown-item "
-                  type="button" 
-                  data-bs-toggle="modal" data-bs-target="#profile"
-                  >Profile</a></li>
-                <li><a class="dropdown-item" href="{{url_for('logout')}}">Logout</a></li>
-                {% else %}
-                <li><a class="dropdown-item" href="{{url_for('login')}}">Login</a></li>
-                <li><a class="dropdown-item" href="{{url_for('signup')}}">Sign Up</a></li>
-                {% endif %}
-              </ul>
-            </li>
-          </div>
-        </ul>
-      </div>
-    </div>
-  </nav>
+  <div class="container">
+    <a class="navbar-brand text-warning fw-bold text-center" href="{{ url_for('home') }}">
+      BUZZER<span class="text-dark fw-bold">Beater</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-  <!--Profile Account Card-->
-  <div class="modal" id="profile" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Profile Account</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="d-flex flex-column align-items-center py-3">
-            <img src="/static/images/img/undraw_profile_2.svg" class="profile-img rounded-circle w-50" alt="{{ session['first_name'] }}">
-            <h5 class="text-center mt-3">{{ session['first_name'] }} {{ session['last_name'] }}</h5>
-            <span>
-              <i class="bi bi-geo-alt-fill"></i> {{ session['address'] }}
-            </span>
-            <span>
-              <i class="bi bi-envelope-fill"></i> {{ session['email'] }}
-            </span>
-            <span>
-              <i class="bi bi-telephone-fill"></i> {{ session['phone'] }}
-            </span>
-            <div class="d-flex-justify-content-center">
-              <a class="btn btn-success btn-sm my-2"
-                href="{{url_for('view_order')}}"
-                type="button">
-                <i class="bi bi-cart-check-fill"></i> View Orders
-              </a>
-              <a class="btn btn-warning btn-sm my-2"
-                href="{{url_for('view_cart')}}"
-                type="button">
-                <i class="bi bi-bag-plus-fill"></i> View Cart
-              </a>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 text-center d-flex align-items-center flex-column flex-lg-row">
+
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="{{ url_for('home') }}">Home</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('shop') }}">Shop</a>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+            aria-expanded="false">About Us</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{ url_for('aboutUs') }}">Developers</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#contacts">Contacts</a></li>
+            <li><a class="dropdown-item" href="#feedback">Feedback</a></li>
+            <li><a class="dropdown-item" href="#location">Location</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center justify-content-center" href="#" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            {% if session['first_name'] %}
+            <div class="d-flex align-items-center">
+              <span class="me-2">{{ session['first_name'] }}</span>
+              <img src="/static/images/img/undraw_profile_2.svg" class="profile-img rounded-circle"
+                alt="{{ session['first_name'] }}">
             </div>
+            {% else %}
+            <i class="bi bi-person-circle"></i>
+            {% endif %}
+          </a>
+          <ul class="dropdown-menu">
+            {% if session['first_name'] %}
+            <li>
+              <a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#profile">Profile</a>
+            </li>
+            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+            {% else %}
+            <li><a class="dropdown-item" href="{{ url_for('login') }}">Login</a></li>
+            <li><a class="dropdown-item" href="{{ url_for('signup') }}">Sign Up</a></li>
+            {% endif %}
+          </ul>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Profile Modal -->
+<div class="modal fade" id="profile" tabindex="-1" aria-labelledby="profileLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="profileLabel">Profile Account</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex flex-column align-items-center py-3">
+          <img src="/static/images/img/undraw_profile_2.svg" class="profile-img rounded-circle w-50"
+            alt="{{ session['first_name'] }}">
+          <h5 class="text-center mt-3">{{ session['first_name'] }} {{ session['last_name'] }}</h5>
+          <span><i class="bi bi-geo-alt-fill"></i> {{ session['address'] }}</span>
+          <span><i class="bi bi-envelope-fill"></i> {{ session['email'] }}</span>
+          <span><i class="bi bi-telephone-fill"></i> {{ session['phone'] }}</span>
+          <div class="d-flex gap-2 my-2">
+            <a class="btn btn-success btn-sm" href="{{ url_for('view_order') }}" type="button">
+              <i class="bi bi-cart-check-fill"></i> View Orders
+            </a>
+            <a class="btn btn-warning btn-sm" href="{{ url_for('view_cart') }}" type="button">
+              <i class="bi bi-bag-plus-fill"></i> View Cart
+            </a>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <!--End of Profile Account Card-->
-
-
+</div>
+<!-- End Profile Modal -->
 
 {% endblock %}

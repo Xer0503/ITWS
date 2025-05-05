@@ -12,3 +12,6 @@
 img {
     width: 150px;
 }
+#comp:hover img{
+    width: 150px;
+}
