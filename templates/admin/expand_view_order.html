@@ -193,7 +193,7 @@
                                 <div class="card p-3 h-100">
                                     <h5 class="text-center fw-bold text-dark">Items Information</h5>
                                     <div class="d-flex justify-content-center">
-                                        <img src="/static/images/{{item_details[5]}}.png" class="w-25" alt="{{ item_details[1] }}">
+                                        <img src="{{ url_for('get_image', item_id=item_details[0]) }}" class="w-25" alt="{{ item_details[1] }}">
                                     </div>
                                     <div class="card-body">
                                         <div class="d-flex flex-column">

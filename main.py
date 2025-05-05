@@ -258,7 +258,13 @@ def delete_feedback_sql(feedback_id):
 #for authentication code
 @app.route('/login')
 def login():
-    return render_template('login.html')
+    if 'user_id' in session:
+        return redirect(url_for('shop'))
+    elif 'role' in session and session['role'] == 'admin':
+        return redirect(url_for('admin'))
+    else:
+        return render_template('login.html')
+
 
 @app.route('/login', methods=['POST'])
 def login_validation():
@@ -554,9 +560,6 @@ def query_customer_info(customer_id):
     con.commit()
     con.close()
 
-    for i in customer_details:
-        print('fetch customer: ', i)
-
     return customer_details
 
 def query_items_info(item_id):
@@ -569,8 +572,8 @@ def query_items_info(item_id):
     con.commit()
     con.close()
 
-    for i in item_details:
-        print('fetch item: ', i)
+    for item in item_details:
+        print(item)
 
     return item_details
 # end view transaction record code
