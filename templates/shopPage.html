@@ -9,7 +9,7 @@
         <div class="row g-3">
             {% for i in data %}
                 <div class="col-12 col-lg-4 col-md-6 mb-4">
-                    <div class="card rounded shadow-sm">
+                    <div class="card rounded shadow-sm w-100 h-100 mx-auto">
                         <div class="container p-2 d-flex justify-content-center w-50 h-50">
                             <img src="{{ url_for('get_image', item_id=i[0]) }}" class="card-img-top" alt="{{ i[1] }}">
                         </div>
@@ -45,14 +45,14 @@
                 <!-- Buy Modal -->
                 <div class="modal" id="buy{{i[0]}}" tabindex="-1">
                     <div class="modal-dialog">
-                        <div class="modal-content">
+                        <div class="modal-content w-75">
                             <div class="modal-header">
                                 <h5 class="modal-title">{{ i[1] }}</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 <div class="d-flex justify-content-center mb-3">
-                                    <img src="{{ url_for('get_image', item_id=i[0]) }}" class="card-img-top w-50" alt="{{ i[1] }}">
+                                    <img src="{{ url_for('get_image', item_id=i[0]) }}" class="card-img-top w-25" alt="{{ i[1] }}">
                                 </div>
                                 <p class="card-text">
                                     {{ i[2] }}
@@ -73,7 +73,9 @@
                                     <input type="hidden" name="item_name" value="{{ i[1] }}">
                                     <input type="hidden" name="item_price" value="{{ i[3] }}">
                                     <input type="hidden" name="item_category" value="{{ i[5] }}">
-                                    <button type="submit" class="btn btn-warning">Buy Now</button>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-warning">Buy Now</button>
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -84,14 +86,14 @@
                 <!-- Add to cart Modal -->
                 <div class="modal" id="cart{{i[0]}}" tabindex="-1">
                     <div class="modal-dialog">
-                        <div class="modal-content">
+                        <div class="modal-content w-75">
                             <div class="modal-header">
                                 <h5 class="modal-title">{{ i[1] }}</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 <div class="d-flex justify-content-center mb-3">
-                                    <img src="{{ url_for('get_image', item_id=i[0]) }}" class="card-img-top w-50" alt="{{ i[1] }}">
+                                    <img src="{{ url_for('get_image', item_id=i[0]) }}" class="card-img-top w-25" alt="{{ i[1] }}">
                                 </div>
                                 <p class="card-text">
                                     {{ i[2] }}
@@ -112,7 +114,9 @@
                                     <input type="hidden" name="item_name" value="{{ i[1] }}">
                                     <input type="hidden" name="item_price" value="{{ i[3] }}">
                                     <input type="hidden" name="item_category" value="{{ i[5] }}">
-                                    <button type="submit" class="btn btn-warning">Add to Cart</button>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-warning">Add to Cart</button>
+                                    </div>
                                 </form>
                             </div>
                         </div>

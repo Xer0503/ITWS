@@ -383,7 +383,10 @@ def buy_items_fr_cart():
 
 @app.route('/buy_items', methods=['POST'])
 def buy_items():
-    #in buy section
+    #in buy 
+    con = connection_prod()
+    c = con.cursor()
+    
     customer_id = session['user_id']
     item_id = request.form['item_id']
     item_name = request.form['item_name']
@@ -391,6 +394,7 @@ def buy_items():
     item_price = request.form['item_price']
     quantity = request.form['quantity']
     total_price = float(item_price) * float(quantity)
+
     add_order(customer_id, item_id, quantity, total_price, item_name, item_category)
 
     return redirect(url_for('shop'))
