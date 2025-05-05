@@ -306,9 +306,9 @@ def login_validation():
 
         else:
             con.close()
-            return render_template('login.html', wrong='Invalid email or password')
+            return render_template('login.html', wrong='Account not Found (Sign up first), or Enter Correct Email or Password')
     else:
-        return render_template('login.html', wrong='Please enter both email and password')
+        return render_template('login.html', wrong='Wrong Email or Password')
 
 @app.route('/signup')
 def signup():
