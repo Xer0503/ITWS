@@ -59,7 +59,18 @@
             {% endif %}
           </ul>
         </li>
-
+        {% if session['first_name'] %}
+        <li class="nav-item">
+          <div class="d-flex gap-2 my-2">
+            <a class="btn btn-success btn-sm" href="{{ url_for('view_order') }}" type="button">
+              <i class="bi bi-cart-check-fill"></i>
+            </a>
+            <a class="btn btn-warning btn-sm" href="{{ url_for('view_cart') }}" type="button">
+              <i class="bi bi-bag-plus-fill"></i>
+            </a>
+          </div>
+        </li>
+        {% endif %}
       </ul>
     </div>
   </div>
