@@ -36,7 +36,7 @@
 
         {% if session['first_name'] %}
         <li class="nav-item">
-          <div class="d-flex gap-2 my-2">
+          <div class="d-flex my-2 btn-group" role="group" aria-label="Basic example">
             <a class="btn btn-success btn-sm" href="{{ url_for('view_order') }}" type="button">
               <i class="bi bi-cart-check-fill"></i>
             </a>
