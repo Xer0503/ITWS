@@ -206,7 +206,7 @@ def get_image(item_id):
     con.close()
 
     if row and row[0]:
-        return Response(row[0], mimetype="image/jpeg")  # or detect type if needed
+        return Response(row[0], mimetype="image/jpeg")
     return '', 404
 
 
