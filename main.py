@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, url_for, redirect, session, Response
 from connection import connection_prod, connection_acc, connection_order, connection_cart
 from db import query_items, query_feedback
@@ -579,4 +580,5 @@ def query_items_info(item_id):
 # end view transaction record code
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
